@@ -14,10 +14,10 @@ exclude = ["provenance", "test_artifacts"]
 
 [dependencies]
 base64 = "0.22.0"
-cosmrs = { version = "0.14.0", features = ["cosmwasm"] }
-cosmwasm-std = "1.5"
-provwasm-std = { version = "2.2.0" }
-prost = { version = "0.11.9", default-features = false, features = ["prost-derive"] }
+cosmrs = { version = "0.20.0", features = ["cosmwasm"] }
+cosmwasm-std = "2.1.3"
+provwasm-std = { git = "https://github.com/provenance-io/provwasm.git", branch = "main" }
+prost = { version = "0.13.2", default-features = false, features = ["prost-derive"] }
 serde = "1.0.197"
 serde_json = "1.0.115"
 test-tube-prov = { version = "0.1.0-rc1", path = "../test-tube" }
@@ -27,6 +27,6 @@ thiserror = "1.0.58"
 bindgen = "0.69.1"
 
 [dev-dependencies]
-cw1-whitelist = "1.1.1"
+cw1-whitelist = "2.0.0"
 rayon = "1.5.3"
 marker = { version = "2.2.0", git = "https://github.com/provenance-io/provwasm" }
