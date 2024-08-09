@@ -52,6 +52,9 @@ impl PartialEq for RunnerError {
 
 #[derive(Error, Debug)]
 pub enum DecodeError {
+    #[error("{0}")]
+    GenericError(String),
+
     #[error("invalid utf8 bytes")]
     Utf8Error(#[from] Utf8Error),
 
