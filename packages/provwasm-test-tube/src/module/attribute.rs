@@ -1,8 +1,10 @@
 use provwasm_std::types::provenance::attribute::v1::{
     MsgAddAttributeRequest, MsgAddAttributeResponse, MsgDeleteAttributeRequest,
     MsgDeleteAttributeResponse, MsgDeleteDistinctAttributeRequest, MsgUpdateAttributeRequest,
-    QueryAttributeRequest, QueryAttributeResponse, QueryAttributesRequest, QueryAttributesResponse,
-    QueryParamsRequest, QueryParamsResponse, QueryScanRequest, QueryScanResponse,
+    QueryAccountDataRequest, QueryAccountDataResponse, QueryAttributeAccountsRequest,
+    QueryAttributeAccountsResponse, QueryAttributeRequest, QueryAttributeResponse,
+    QueryAttributesRequest, QueryAttributesResponse, QueryParamsRequest, QueryParamsResponse,
+    QueryScanRequest, QueryScanResponse,
 };
 
 use test_tube_prov::module::Module;
@@ -52,5 +54,13 @@ where
 
     fn_query! {
         pub query_scan ["/provenance.attribute.v1.Query/Scan"]: QueryScanRequest => QueryScanResponse
+    }
+
+    fn_query! {
+        pub query_attribute_accounts ["/provenance.attribute.v1.Query/AttributeAccounts"]: QueryAttributeAccountsRequest => QueryAttributeAccountsResponse
+    }
+
+    fn_query! {
+        pub query_account_data ["/provenance.attribute.v1.Query/AccountData"]: QueryAccountDataRequest => QueryAccountDataResponse
     }
 }
