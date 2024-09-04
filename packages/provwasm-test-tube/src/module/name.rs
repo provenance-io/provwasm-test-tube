@@ -1,8 +1,9 @@
 use provwasm_std::types::provenance::name::v1::{
     MsgBindNameRequest, MsgBindNameResponse, MsgCreateRootNameRequest, MsgCreateRootNameResponse,
     MsgDeleteNameRequest, MsgDeleteNameResponse, MsgModifyNameRequest, MsgModifyNameResponse,
-    QueryParamsRequest, QueryParamsResponse, QueryResolveRequest, QueryResolveResponse,
-    QueryReverseLookupRequest, QueryReverseLookupResponse,
+    MsgUpdateParamsRequest, MsgUpdateParamsResponse, QueryParamsRequest, QueryParamsResponse,
+    QueryResolveRequest, QueryResolveResponse, QueryReverseLookupRequest,
+    QueryReverseLookupResponse,
 };
 
 use test_tube_prov::{fn_execute, fn_query, Module, Runner};
@@ -30,11 +31,15 @@ where
     }
 
     fn_execute! {
+        pub modify_name: MsgModifyNameRequest["/provenance.name.v1.MsgModifyNameRequest"] => MsgModifyNameResponse
+    }
+
+    fn_execute! {
         pub create_root_name: MsgCreateRootNameRequest["/provenance.name.v1.MsgCreateRootNameRequest"] => MsgCreateRootNameResponse
     }
 
     fn_execute! {
-        pub modify_name: MsgModifyNameRequest["/provenance.name.v1.MsgModifyNameRequest"] => MsgModifyNameResponse
+        pub update_params: MsgUpdateParamsRequest["/provenance.name.v1.MsgUpdateParamsRequest"] => MsgUpdateParamsResponse
     }
 
     fn_query! {

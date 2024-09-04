@@ -1,21 +1,21 @@
 use cosmwasm_std::Coin;
 use provwasm_std::types::cosmwasm::wasm::v1::{
     AccessConfig, MsgExecuteContract, MsgExecuteContractResponse, MsgInstantiateContract,
-    MsgInstantiateContractResponse, MsgStoreCode, MsgStoreCodeResponse,
-    QuerySmartContractStateRequest, QuerySmartContractStateResponse,
+    MsgInstantiateContractResponse, MsgMigrateContract, MsgMigrateContractResponse, MsgStoreCode,
+    MsgStoreCodeResponse, QuerySmartContractStateRequest, QuerySmartContractStateResponse,
 };
 use serde::{de::DeserializeOwned, Serialize};
 
 use test_tube_prov::{
-    Account, DecodeError, EncodeError, Module, Runner, RunnerError, RunnerExecuteResult,
-    RunnerResult, SigningAccount,
+    Account, DecodeError, EncodeError, Runner, RunnerError, RunnerExecuteResult, RunnerResult,
+    SigningAccount,
 };
 
 pub struct Wasm<'a, R: Runner<'a>> {
     runner: &'a R,
 }
 
-impl<'a, R: Runner<'a>> Module<'a, R> for Wasm<'a, R> {
+impl<'a, R: Runner<'a>> super::Module<'a, R> for Wasm<'a, R> {
     fn new(runner: &'a R) -> Self {
         Wasm { runner }
     }
@@ -98,6 +98,28 @@ where
                 contract: contract.to_owned(),
             },
             "/cosmwasm.wasm.v1.MsgExecuteContract",
+            signer,
+        )
+    }
+
+    pub fn migrate<M>(
+        &self,
+        code_id: u64,
+        contract: &str,
+        msg: &M,
+        signer: &SigningAccount,
+    ) -> RunnerExecuteResult<MsgMigrateContractResponse>
+    where
+        M: ?Sized + Serialize,
+    {
+        self.runner.execute(
+            MsgMigrateContract {
+                sender: signer.address(),
+                contract: contract.to_owned(),
+                code_id,
+                msg: serde_json::to_vec(msg).map_err(EncodeError::JsonEncodeError)?,
+            },
+            "/cosmwasm.wasm.v1.MsgMigrateContract",
             signer,
         )
     }
