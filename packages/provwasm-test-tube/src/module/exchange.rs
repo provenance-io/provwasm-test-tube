@@ -19,16 +19,22 @@ use provwasm_std::types::provenance::exchange::v1::{
     MsgMarketUpdateIntermediaryDenomRequest, MsgMarketUpdateIntermediaryDenomResponse,
     MsgMarketUpdateUserSettleRequest, MsgMarketUpdateUserSettleResponse, MsgMarketWithdrawRequest,
     MsgMarketWithdrawResponse, MsgRejectPaymentRequest, MsgRejectPaymentResponse,
-    MsgRejectPaymentsRequest, MsgRejectPaymentsResponse, QueryGetAllMarketsRequest,
-    QueryGetAllMarketsResponse, QueryGetAllOrdersRequest, QueryGetAllOrdersResponse,
-    QueryGetAssetOrdersRequest, QueryGetAssetOrdersResponse, QueryGetMarketOrdersRequest,
-    QueryGetMarketOrdersResponse, QueryGetMarketRequest, QueryGetMarketResponse,
-    QueryGetOrderByExternalIdRequest, QueryGetOrderByExternalIdResponse, QueryGetOrderRequest,
-    QueryGetOrderResponse, QueryGetOwnerOrdersRequest, QueryGetOwnerOrdersResponse,
-    QueryOrderFeeCalcRequest, QueryOrderFeeCalcResponse, QueryParamsRequest, QueryParamsResponse,
-    QueryValidateCreateMarketRequest, QueryValidateCreateMarketResponse,
-    QueryValidateManageFeesRequest, QueryValidateManageFeesResponse, QueryValidateMarketRequest,
-    QueryValidateMarketResponse,
+    MsgRejectPaymentsRequest, MsgRejectPaymentsResponse, QueryGetAccountCommitmentsRequest,
+    QueryGetAccountCommitmentsResponse, QueryGetAllCommitmentsRequest,
+    QueryGetAllCommitmentsResponse, QueryGetAllMarketsRequest, QueryGetAllMarketsResponse,
+    QueryGetAllOrdersRequest, QueryGetAllOrdersResponse, QueryGetAllPaymentsRequest,
+    QueryGetAllPaymentsResponse, QueryGetAssetOrdersRequest, QueryGetAssetOrdersResponse,
+    QueryGetCommitmentRequest, QueryGetCommitmentResponse, QueryGetMarketCommitmentsRequest,
+    QueryGetMarketCommitmentsResponse, QueryGetMarketOrdersRequest, QueryGetMarketOrdersResponse,
+    QueryGetMarketRequest, QueryGetMarketResponse, QueryGetOrderByExternalIdRequest,
+    QueryGetOrderByExternalIdResponse, QueryGetOrderRequest, QueryGetOrderResponse,
+    QueryGetOwnerOrdersRequest, QueryGetOwnerOrdersResponse, QueryGetPaymentRequest,
+    QueryGetPaymentResponse, QueryGetPaymentsWithSourceRequest, QueryGetPaymentsWithSourceResponse,
+    QueryGetPaymentsWithTargetRequest, QueryOrderFeeCalcRequest, QueryOrderFeeCalcResponse,
+    QueryParamsRequest, QueryParamsResponse, QueryPaymentFeeCalcRequest,
+    QueryPaymentFeeCalcResponse, QueryValidateCreateMarketRequest,
+    QueryValidateCreateMarketResponse, QueryValidateManageFeesRequest,
+    QueryValidateManageFeesResponse, QueryValidateMarketRequest, QueryValidateMarketResponse,
 };
 
 use test_tube_prov::{fn_execute, fn_query, Module, Runner};
@@ -192,6 +198,22 @@ where
     }
 
     fn_query! {
+        pub query_get_commitment ["/provenance.exchange.v1.Query/GetCommitment"]: QueryGetCommitmentRequest => QueryGetCommitmentResponse
+    }
+
+    fn_query! {
+        pub query_get_account_commitments ["/provenance.exchange.v1.Query/GetAccountCommitments"]: QueryGetAccountCommitmentsRequest => QueryGetAccountCommitmentsResponse
+    }
+
+    fn_query! {
+        pub query_get_market_commitments ["/provenance.exchange.v1.Query/GetMarketCommitments"]: QueryGetMarketCommitmentsRequest => QueryGetMarketCommitmentsResponse
+    }
+
+    fn_query! {
+        pub query_get_all_commitments ["/provenance.exchange.v1.Query/GetAllCommitments"]: QueryGetAllCommitmentsRequest => QueryGetAllCommitmentsResponse
+    }
+
+    fn_query! {
         pub query_get_market ["/provenance.exchange.v1.Query/GetMarket"]: QueryGetMarketRequest => QueryGetMarketResponse
     }
 
@@ -213,5 +235,25 @@ where
 
     fn_query! {
         pub query_validate_manage_fees ["/provenance.exchange.v1.Query/ValidateManageFees"]: QueryValidateManageFeesRequest => QueryValidateManageFeesResponse
+    }
+
+    fn_query! {
+        pub query_get_payment ["/provenance.exchange.v1.Query/GetPayment"]: QueryGetPaymentRequest => QueryGetPaymentResponse
+    }
+
+    fn_query! {
+        pub query_get_payments_with_source ["/provenance.exchange.v1.Query/GetPaymentsWithSource"]: QueryGetPaymentsWithSourceRequest => QueryGetPaymentsWithSourceResponse
+    }
+
+    fn_query! {
+        pub query_get_payments_with_target ["/provenance.exchange.v1.Query/GetPaymentsWithTarget"]: QueryGetPaymentsWithTargetRequest => QueryGetPaymentsWithTargetRequest
+    }
+
+    fn_query! {
+        pub query_get_all_payments ["/provenance.exchange.v1.Query/GetAllPayments"]: QueryGetAllPaymentsRequest => QueryGetAllPaymentsResponse
+    }
+
+    fn_query! {
+        pub query_payment_fee_calc ["/provenance.exchange.v1.Query/PaymentFeeCalc"]: QueryPaymentFeeCalcRequest => QueryPaymentFeeCalcResponse
     }
 }
