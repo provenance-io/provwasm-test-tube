@@ -1,29 +1,36 @@
 use provwasm_std::types::provenance::metadata::v1::{
-    ContractSpecificationRequest, ContractSpecificationResponse,
+    AccountDataRequest, AccountDataResponse, ContractSpecificationRequest,
+    ContractSpecificationResponse, ContractSpecificationsAllRequest,
+    ContractSpecificationsAllResponse, GetByAddrRequest, GetByAddrResponse,
     MsgAddContractSpecToScopeSpecRequest, MsgAddContractSpecToScopeSpecResponse,
-    MsgAddScopeDataAccessRequest, MsgAddScopeDataAccessResponse, MsgAddScopeOwnerRequest,
-    MsgAddScopeOwnerResponse, MsgBindOsLocatorRequest, MsgBindOsLocatorResponse,
-    MsgDeleteContractSpecFromScopeSpecRequest, MsgDeleteContractSpecFromScopeSpecResponse,
-    MsgDeleteContractSpecificationRequest, MsgDeleteContractSpecificationResponse,
-    MsgDeleteOsLocatorRequest, MsgDeleteOsLocatorResponse, MsgDeleteRecordRequest,
-    MsgDeleteRecordResponse, MsgDeleteRecordSpecificationRequest,
+    MsgAddNetAssetValuesRequest, MsgAddNetAssetValuesResponse, MsgAddScopeDataAccessRequest,
+    MsgAddScopeDataAccessResponse, MsgAddScopeOwnerRequest, MsgAddScopeOwnerResponse,
+    MsgBindOsLocatorRequest, MsgBindOsLocatorResponse, MsgDeleteContractSpecFromScopeSpecRequest,
+    MsgDeleteContractSpecFromScopeSpecResponse, MsgDeleteContractSpecificationRequest,
+    MsgDeleteContractSpecificationResponse, MsgDeleteOsLocatorRequest, MsgDeleteOsLocatorResponse,
+    MsgDeleteRecordRequest, MsgDeleteRecordResponse, MsgDeleteRecordSpecificationRequest,
     MsgDeleteRecordSpecificationResponse, MsgDeleteScopeDataAccessRequest,
     MsgDeleteScopeDataAccessResponse, MsgDeleteScopeOwnerRequest, MsgDeleteScopeOwnerResponse,
     MsgDeleteScopeRequest, MsgDeleteScopeResponse, MsgDeleteScopeSpecificationRequest,
     MsgDeleteScopeSpecificationResponse, MsgMigrateValueOwnerRequest, MsgMigrateValueOwnerResponse,
-    MsgModifyOsLocatorRequest, MsgModifyOsLocatorResponse, MsgUpdateValueOwnersRequest,
-    MsgUpdateValueOwnersResponse, MsgWriteContractSpecificationRequest,
-    MsgWriteContractSpecificationResponse, MsgWriteRecordRequest, MsgWriteRecordResponse,
-    MsgWriteRecordSpecificationRequest, MsgWriteRecordSpecificationResponse, MsgWriteScopeRequest,
-    MsgWriteScopeResponse, MsgWriteScopeSpecificationRequest, MsgWriteScopeSpecificationResponse,
-    MsgWriteSessionRequest, MsgWriteSessionResponse, OsLocatorParamsRequest,
+    MsgModifyOsLocatorRequest, MsgModifyOsLocatorResponse, MsgSetAccountDataRequest,
+    MsgSetAccountDataResponse, MsgUpdateValueOwnersRequest, MsgUpdateValueOwnersResponse,
+    MsgWriteContractSpecificationRequest, MsgWriteContractSpecificationResponse,
+    MsgWriteRecordRequest, MsgWriteRecordResponse, MsgWriteRecordSpecificationRequest,
+    MsgWriteRecordSpecificationResponse, MsgWriteScopeRequest, MsgWriteScopeResponse,
+    MsgWriteScopeSpecificationRequest, MsgWriteScopeSpecificationResponse, MsgWriteSessionRequest,
+    MsgWriteSessionResponse, OsAllLocatorsRequest, OsAllLocatorsResponse, OsLocatorParamsRequest,
     OsLocatorParamsResponse, OsLocatorRequest, OsLocatorResponse, OsLocatorsByScopeRequest,
     OsLocatorsByScopeResponse, OsLocatorsByUriRequest, OsLocatorsByUriResponse, OwnershipRequest,
-    OwnershipResponse, QueryParamsRequest, QueryParamsResponse, RecordSpecificationRequest,
-    RecordSpecificationResponse, RecordSpecificationsForContractSpecificationRequest,
-    RecordSpecificationsForContractSpecificationResponse, RecordsRequest, RecordsResponse,
-    ScopeRequest, ScopeResponse, ScopeSpecificationRequest, ScopeSpecificationResponse,
-    SessionsRequest, SessionsResponse, ValueOwnershipRequest, ValueOwnershipResponse,
+    OwnershipResponse, QueryParamsRequest, QueryParamsResponse, QueryScopeNetAssetValuesRequest,
+    QueryScopeNetAssetValuesResponse, RecordSpecificationRequest, RecordSpecificationResponse,
+    RecordSpecificationsAllRequest, RecordSpecificationsAllResponse,
+    RecordSpecificationsForContractSpecificationRequest,
+    RecordSpecificationsForContractSpecificationResponse, RecordsAllRequest, RecordsAllResponse,
+    RecordsRequest, RecordsResponse, ScopeRequest, ScopeResponse, ScopeSpecificationRequest,
+    ScopeSpecificationResponse, ScopeSpecificationsAllRequest, ScopeSpecificationsAllResponse,
+    ScopesAllRequest, ScopesAllResponse, SessionsAllRequest, SessionsRequest, SessionsResponse,
+    ValueOwnershipRequest, ValueOwnershipResponse,
 };
 use test_tube_prov::{fn_execute, fn_query, Module, Runner};
 
@@ -98,15 +105,15 @@ where
     }
 
     fn_execute! {
+        pub delete_contract_specification: MsgDeleteContractSpecificationRequest["/provenance.metadata.v1.MsgDeleteContractSpecificationRequest"] => MsgDeleteContractSpecificationResponse
+    }
+
+    fn_execute! {
         pub add_contract_spec_to_scope_spec: MsgAddContractSpecToScopeSpecRequest["/provenance.metadata.v1.MsgAddContractSpecToScopeSpecRequest"] => MsgAddContractSpecToScopeSpecResponse
     }
 
     fn_execute! {
         pub delete_contract_spec_from_scope_spec: MsgDeleteContractSpecFromScopeSpecRequest["/provenance.metadata.v1.MsgDeleteContractSpecFromScopeSpecRequest"] => MsgDeleteContractSpecFromScopeSpecResponse
-    }
-
-    fn_execute! {
-        pub delete_contract_specification: MsgDeleteContractSpecificationRequest["/provenance.metadata.v1.MsgDeleteContractSpecificationRequest"] => MsgDeleteContractSpecificationResponse
     }
 
     fn_execute! {
@@ -129,6 +136,14 @@ where
         pub modify_os_locator: MsgModifyOsLocatorRequest["/provenance.metadata.v1.MsgModifyOSLocatorRequest"] => MsgModifyOsLocatorResponse
     }
 
+    fn_execute! {
+        pub set_account_data: MsgSetAccountDataRequest["/provenance.metadata.v1.MsgSetAccountDataRequest"] => MsgSetAccountDataResponse
+    }
+
+    fn_execute! {
+        pub add_net_asset_values: MsgAddNetAssetValuesRequest["/provenance.metadata.v1.MsgAddNetAssetValuesRequest"] => MsgAddNetAssetValuesResponse
+    }
+
     fn_query! {
         pub query_params ["/provenance.metadata.v1.Query/Params"]: QueryParamsRequest => QueryParamsResponse
     }
@@ -138,11 +153,23 @@ where
     }
 
     fn_query! {
+        pub query_scopes_all ["/provenance.metadata.v1.Query/ScopesAll"]: ScopesAllRequest => ScopesAllResponse
+    }
+
+    fn_query! {
         pub query_sessions ["/provenance.metadata.v1.Query/Sessions"]: SessionsRequest => SessionsResponse
     }
 
     fn_query! {
+        pub query_sessions_all ["/provenance.metadata.v1.Query/SessionsAll"]: SessionsAllRequest => SessionsAllRequest
+    }
+
+    fn_query! {
         pub query_records ["/provenance.metadata.v1.Query/Records"]: RecordsRequest => RecordsResponse
+    }
+
+    fn_query! {
+        pub query_records_all ["/provenance.metadata.v1.Query/RecordsAll"]: RecordsAllRequest => RecordsAllResponse
     }
 
     fn_query! {
@@ -158,7 +185,15 @@ where
     }
 
     fn_query! {
+        pub query_scope_specifications_all ["/provenance.metadata.v1.Query/ScopeSpecificationsAll"]: ScopeSpecificationsAllRequest => ScopeSpecificationsAllResponse
+    }
+
+    fn_query! {
         pub query_contract_specification ["/provenance.metadata.v1.Query/ContractSpecification"]: ContractSpecificationRequest => ContractSpecificationResponse
+    }
+
+    fn_query! {
+        pub query_contract_specifications_all ["/provenance.metadata.v1.Query/ContractSpecificationsAll"]: ContractSpecificationsAllRequest => ContractSpecificationsAllResponse
     }
 
     fn_query! {
@@ -167,6 +202,14 @@ where
 
     fn_query! {
         pub query_record_specification ["/provenance.metadata.v1.Query/RecordSpecification"]: RecordSpecificationRequest => RecordSpecificationResponse
+    }
+
+    fn_query! {
+        pub query_record_specifications_all ["/provenance.metadata.v1.Query/RecordSpecificationsAll"]: RecordSpecificationsAllRequest => RecordSpecificationsAllResponse
+    }
+
+    fn_query! {
+        pub query_get_by_address ["/provenance.metadata.v1.Query/GetByAddr"]: GetByAddrRequest => GetByAddrResponse
     }
 
     fn_query! {
@@ -183,5 +226,17 @@ where
 
     fn_query! {
         pub query_os_locators_by_scope ["/provenance.metadata.v1.Query/OSLocatorsByScope"]: OsLocatorsByScopeRequest => OsLocatorsByScopeResponse
+    }
+
+    fn_query! {
+        pub query_os_locators_all ["/provenance.metadata.v1.Query/OSAllLocators"]: OsAllLocatorsRequest => OsAllLocatorsResponse
+    }
+
+    fn_query! {
+        pub query_account_data ["/provenance.metadata.v1.Query/AccountData"]: AccountDataRequest => AccountDataResponse
+    }
+
+    fn_query! {
+        pub query_scope_net_asset_values ["/provenance.metadata.v1.Query/ScopeNetAssetValues"]: QueryScopeNetAssetValuesRequest => QueryScopeNetAssetValuesResponse
     }
 }
