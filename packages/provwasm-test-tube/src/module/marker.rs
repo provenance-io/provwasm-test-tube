@@ -29,22 +29,6 @@ where
     R: Runner<'a>,
 {
     fn_execute! {
-        pub grant_allowance: MsgGrantAllowanceRequest["/provenance.marker.v1.MsgGrantAllowanceRequest"] => MsgGrantAllowanceResponse
-    }
-
-    fn_execute! {
-        pub add_marker: MsgAddMarkerRequest["/provenance.marker.v1.MsgAddMarkerRequest"] => MsgAddMarkerResponse
-    }
-
-    fn_execute! {
-        pub add_access: MsgAddAccessRequest["/provenance.marker.v1.MsgAddAccessRequest"] => MsgAddAccessResponse
-    }
-
-    fn_execute! {
-        pub delete_access: MsgDeleteAccessRequest["/provenance.marker.v1.MsgDeleteAccessRequest"] => MsgDeleteAccessResponse
-    }
-
-    fn_execute! {
         pub finalize: MsgFinalizeRequest["/provenance.marker.v1.MsgFinalizeRequest"] => MsgFinalizeResponse
     }
 
@@ -69,7 +53,19 @@ where
     }
 
     fn_execute! {
+        pub add_access: MsgAddAccessRequest["/provenance.marker.v1.MsgAddAccessRequest"] => MsgAddAccessResponse
+    }
+
+    fn_execute! {
+        pub delete_access: MsgDeleteAccessRequest["/provenance.marker.v1.MsgDeleteAccessRequest"] => MsgDeleteAccessResponse
+    }
+
+    fn_execute! {
         pub withdraw: MsgWithdrawRequest["/provenance.marker.v1.MsgWithdrawRequest"] => MsgWithdrawResponse
+    }
+
+    fn_execute! {
+        pub add_marker: MsgAddMarkerRequest["/provenance.marker.v1.MsgAddMarkerRequest"] => MsgAddMarkerResponse
     }
 
     fn_execute! {
@@ -78,6 +74,10 @@ where
 
     fn_execute! {
         pub set_denom_metadata: MsgSetDenomMetadataRequest["/provenance.marker.v1.MsgSetDenomMetadataRequest"] => MsgSetDenomMetadataResponse
+    }
+
+    fn_execute! {
+        pub grant_allowance: MsgGrantAllowanceRequest["/provenance.marker.v1.MsgGrantAllowanceRequest"] => MsgGrantAllowanceResponse
     }
 
     fn_execute! {
