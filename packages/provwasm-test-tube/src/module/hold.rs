@@ -17,10 +17,6 @@ impl<'a, R> Hold<'a, R>
 where
     R: Runner<'a>,
 {
-    fn_execute! {
-        pub account_hold: AccountHold["/provenance.hold.v1.AccountHold"] => ()
-    }
-
     fn_query! {
         pub query_get_holds ["/provenance.hold.v1.Query/GetHolds"]: GetHoldsRequest => GetHoldsResponse
     }
