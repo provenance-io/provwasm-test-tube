@@ -84,11 +84,11 @@ where
     }
 
     fn_execute! {
-        pub set_order_external_id: MsgMarketSetOrderExternalIdRequest["/provenance.exchange.v1.MsgMarketSetOrderExternalIDRequest"] => MsgMarketSetOrderExternalIdResponse
+        pub market_set_order_external_id: MsgMarketSetOrderExternalIdRequest["/provenance.exchange.v1.MsgMarketSetOrderExternalIDRequest"] => MsgMarketSetOrderExternalIdResponse
     }
 
     fn_execute! {
-        pub withdraw: MsgMarketWithdrawRequest["/provenance.exchange.v1.MsgMarketWithdrawRequest"] => MsgMarketWithdrawResponse
+        pub market_withdraw: MsgMarketWithdrawRequest["/provenance.exchange.v1.MsgMarketWithdrawRequest"] => MsgMarketWithdrawResponse
     }
 
     fn_execute! {
