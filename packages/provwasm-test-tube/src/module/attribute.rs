@@ -1,8 +1,11 @@
 use provwasm_std::types::provenance::attribute::v1::{
     MsgAddAttributeRequest, MsgAddAttributeResponse, MsgDeleteAttributeRequest,
-    MsgDeleteAttributeResponse, MsgDeleteDistinctAttributeRequest, MsgUpdateAttributeRequest,
-    QueryAttributeRequest, QueryAttributeResponse, QueryAttributesRequest, QueryAttributesResponse,
-    QueryParamsRequest, QueryParamsResponse, QueryScanRequest, QueryScanResponse,
+    MsgDeleteAttributeResponse, MsgDeleteDistinctAttributeRequest, MsgSetAccountDataRequest,
+    MsgSetAccountDataResponse, MsgUpdateAttributeExpirationRequest,
+    MsgUpdateAttributeExpirationResponse, MsgUpdateAttributeRequest, MsgUpdateAttributeResponse,
+    MsgUpdateParamsRequest, MsgUpdateParamsResponse, QueryAttributeRequest, QueryAttributeResponse,
+    QueryAttributesRequest, QueryAttributesResponse, QueryParamsRequest, QueryParamsResponse,
+    QueryScanRequest, QueryScanResponse,
 };
 
 use test_tube_prov::module::Module;
@@ -27,7 +30,11 @@ where
     }
 
     fn_execute! {
-        pub update_attribute: MsgUpdateAttributeRequest["/provenance.attribute.v1.MsgUpdateAttributeRequest"] => MsgAddAttributeResponse
+        pub update_attribute_request: MsgUpdateAttributeRequest["/provenance.attribute.v1.MsgAddAttributeRequest"] => MsgUpdateAttributeResponse
+    }
+
+    fn_execute! {
+        pub update_expiration: MsgUpdateAttributeExpirationRequest["/provenance.attribute.v1.MsgUpdateAttributeExpirationRequest"] => MsgUpdateAttributeExpirationResponse
     }
 
     fn_execute! {
@@ -38,19 +45,35 @@ where
         pub delete_distinct_attribute: MsgDeleteDistinctAttributeRequest["/provenance.attribute.v1.MsgDeleteDistinctAttributeRequest"] => MsgAddAttributeResponse
     }
 
-    fn_query! {
-        pub query_attribute ["/provenance.attribute.v1.Query/Params"]: QueryAttributeRequest => QueryAttributeResponse
+    fn_execute! {
+        pub set_account_data: MsgSetAccountDataRequest["/provenance.attribute.v1.MsgSetAccountDataRequest"] => MsgSetAccountDataResponse
+    }
+
+    fn_execute! {
+        pub update_params: MsgUpdateParamsRequest["/provenance.attribute.v1.MsgUpdateParamsRequest"] => MsgUpdateParamsResponse
     }
 
     fn_query! {
-        pub query_attributes ["/provenance.attribute.v1.Query/Attribute"]: QueryAttributesRequest => QueryAttributesResponse
+        pub query_attribute ["/provenance.attribute.v1.Query/Attribute"]: QueryAttributeRequest => QueryAttributeResponse
     }
 
     fn_query! {
-        pub query_params ["/provenance.attribute.v1.Query/Attributes"]: QueryParamsRequest => QueryParamsResponse
+        pub query_attributes ["/provenance.attribute.v1.Query/Attributes"]: QueryAttributesRequest => QueryAttributesResponse
+    }
+
+    fn_query! {
+        pub query_params ["/provenance.attribute.v1.Query/Params"]: QueryParamsRequest => QueryParamsResponse
     }
 
     fn_query! {
         pub query_scan ["/provenance.attribute.v1.Query/Scan"]: QueryScanRequest => QueryScanResponse
+    }
+
+    fn_query! {
+        pub query_ ["/provenance.attribute.v1.Query/AttributeAccounts"]: QueryScanRequest => QueryScanResponse
+    }
+
+    fn_query! {
+        pub query_scan ["/provenance.attribute.v1.Query/AccountData"]: QueryScanRequest => QueryScanResponse
     }
 }
