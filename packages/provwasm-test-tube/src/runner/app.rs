@@ -1,16 +1,14 @@
-use cosmrs::Any;
 use cosmwasm_std::Coin;
 use prost::Message;
-
 use test_tube_prov::account::SigningAccount;
-use test_tube_prov::runner::result::{RunnerExecuteResult, RunnerExecuteResultMult, RunnerResult};
+use test_tube_prov::runner::result::{RunnerExecuteResult, RunnerResult};
 use test_tube_prov::runner::Runner;
 use test_tube_prov::BaseApp;
 
 const FEE_DENOM: &str = "nhash";
-const PROVENANCE_TEST_ADDRESS_PREFIX: &str = "tp";
+const PROV_ADDRESS_PREFIX: &str = "tp";
 const CHAIN_ID: &str = "testnet";
-const DEFAULT_GAS_ADJUSTMENT: f64 = 1.5;
+const DEFAULT_GAS_ADJUSTMENT: f64 = 1.2;
 
 #[derive(Debug, PartialEq)]
 pub struct ProvwasmTestApp {
@@ -29,7 +27,7 @@ impl ProvwasmTestApp {
             inner: BaseApp::new(
                 FEE_DENOM,
                 CHAIN_ID,
-                PROVENANCE_TEST_ADDRESS_PREFIX,
+                PROV_ADDRESS_PREFIX,
                 DEFAULT_GAS_ADJUSTMENT,
             ),
         }
@@ -80,7 +78,7 @@ impl ProvwasmTestApp {
     pub fn init_account(&self, coins: &[Coin]) -> RunnerResult<SigningAccount> {
         self.inner.init_account(coins)
     }
-    /// Convinience function to create multiple accounts with the same
+    /// Convenience function to create multiple accounts with the same
     /// Initial coins balance
     pub fn init_accounts(&self, coins: &[Coin], count: u64) -> RunnerResult<Vec<SigningAccount>> {
         self.inner.init_accounts(coins, count)
@@ -96,11 +94,6 @@ impl ProvwasmTestApp {
         I: IntoIterator<Item = cosmrs::Any>,
     {
         self.inner.simulate_tx(msgs, signer)
-    }
-
-    /// Set parameter set for a given subspace.
-    pub fn set_param_set(&self, subspace: &str, pset: impl Into<Any>) -> RunnerResult<()> {
-        self.inner.set_param_set(subspace, pset)
     }
 
     /// Get parameter set for a given subspace.
@@ -126,17 +119,6 @@ impl<'a> Runner<'a> for ProvwasmTestApp {
         self.inner.execute_multiple(msgs, signer)
     }
 
-    fn execute_single_block<M, R>(
-        &self,
-        msgs: &[(M, &str, &SigningAccount)],
-    ) -> RunnerExecuteResultMult<R>
-    where
-        M: ::prost::Message,
-        R: ::prost::Message + Default,
-    {
-        self.inner.execute_single_block(msgs)
-    }
-
     fn execute_multiple_raw<R>(
         &self,
         msgs: Vec<cosmrs::Any>,
@@ -159,14 +141,16 @@ impl<'a> Runner<'a> for ProvwasmTestApp {
 
 #[cfg(test)]
 mod tests {
-    use std::option::Option::None;
-
     use cosmwasm_std::{coins, Coin};
+    use provwasm_std::types::cosmos::bank::v1beta1::QueryAllBalancesRequest;
 
-    use test_tube_prov::{Account, Module, RunnerError};
-
+    use crate::bank::Bank;
     use crate::runner::app::ProvwasmTestApp;
     use crate::wasm::Wasm;
+
+    use test_tube_prov::account::{Account, FeeSetting};
+    use test_tube_prov::module::Module;
+    use test_tube_prov::runner::*;
 
     #[test]
     fn test_init_accounts() {
@@ -175,7 +159,7 @@ mod tests {
             .init_accounts(&coins(100_000_000_000, "nhash"), 3)
             .unwrap();
 
-        assert!(accounts.get(0).is_some());
+        assert!(accounts.first().is_some());
         assert!(accounts.get(1).is_some());
         assert!(accounts.get(2).is_some());
         assert!(accounts.get(3).is_none());
@@ -201,28 +185,37 @@ mod tests {
     fn test_get_block_height() {
         let app = ProvwasmTestApp::default();
 
-        assert_eq!(app.get_block_height(), 2i64);
+        assert_eq!(app.get_block_height(), 1i64);
 
         app.increase_time(10u64);
 
-        assert_eq!(app.get_block_height(), 3i64);
+        assert_eq!(app.get_block_height(), 2i64);
     }
 
     #[test]
-    fn test_wasm_execute_and_query() -> Result<(), RunnerError> {
+    fn test_wasm_execute_and_query() {
         use cw1_whitelist::msg::*;
 
         let app = ProvwasmTestApp::default();
         let accs = app
-            .init_accounts(&[Coin::new(100_000_000_000_000, "nhash")], 2)
+            .init_accounts(
+                &[
+                    Coin::new(1_000_000_000_000u128, "uatom"),
+                    Coin::new(1_000_000_000_000u128, "nhash"),
+                ],
+                2,
+            )
             .unwrap();
         let admin = &accs[0];
         let new_admin = &accs[1];
 
         let wasm = Wasm::new(&app);
         let wasm_byte_code = std::fs::read("./test_artifacts/cw1_whitelist.wasm").unwrap();
-        let store_res = wasm.store_code(&wasm_byte_code, None, admin);
-        let code_id = store_res?.data.code_id;
+        let code_id = wasm
+            .store_code(&wasm_byte_code, None, admin)
+            .unwrap()
+            .data
+            .code_id;
         assert_eq!(code_id, 1);
 
         // initialize admins and check if the state is correct
@@ -235,7 +228,7 @@ mod tests {
                     mutable: true,
                 },
                 Some(&admin.address()),
-                None,
+                Some("Test label"),
                 &[],
                 admin,
             )
@@ -266,7 +259,48 @@ mod tests {
 
         assert_eq!(admin_list.admins, new_admins);
         assert!(admin_list.mutable);
+    }
 
-        Ok(())
+    #[test]
+    fn test_custom_fee() {
+        let app = ProvwasmTestApp::default();
+        let initial_balance = 1_000_000_000_000u128;
+        let alice = app.init_account(&coins(initial_balance, "nhash")).unwrap();
+        let bob = app.init_account(&coins(initial_balance, "nhash")).unwrap();
+
+        let amount = Coin::new(1_000_000u128, "nhash");
+        let gas_limit = 100_000_000;
+
+        // use FeeSetting::Auto by default, so should not equal newly custom fee setting
+        let wasm = Wasm::new(&app);
+        let wasm_byte_code = std::fs::read("./test_artifacts/cw1_whitelist.wasm").unwrap();
+        let res = wasm.store_code(&wasm_byte_code, None, &alice).unwrap();
+
+        assert_ne!(res.gas_info.gas_wanted, gas_limit);
+
+        //update fee setting
+        let bob = bob.with_fee_setting(FeeSetting::Custom {
+            amount: amount.clone(),
+            gas_limit,
+        });
+        let res = wasm.store_code(&wasm_byte_code, None, &bob).unwrap();
+
+        let bob_balance = Bank::new(&app)
+            .query_all_balances(&QueryAllBalancesRequest {
+                address: bob.address(),
+                pagination: None,
+                resolve_denom: false,
+            })
+            .unwrap()
+            .balances
+            .into_iter()
+            .find(|c| c.denom == "nhash")
+            .unwrap()
+            .amount
+            .parse::<u128>()
+            .unwrap();
+
+        assert_eq!(res.gas_info.gas_wanted, gas_limit);
+        assert_eq!(bob_balance, initial_balance - amount.amount.u128());
     }
 }
