@@ -8,7 +8,7 @@ use test_tube_prov::BaseApp;
 const FEE_DENOM: &str = "nhash";
 const PROV_ADDRESS_PREFIX: &str = "tp";
 const CHAIN_ID: &str = "testnet";
-const DEFAULT_GAS_ADJUSTMENT: f64 = 1.2;
+const DEFAULT_GAS_ADJUSTMENT: f64 = 1.5;
 
 #[derive(Debug, PartialEq)]
 pub struct ProvwasmTestApp {
@@ -150,7 +150,6 @@ mod tests {
 
     use test_tube_prov::account::{Account, FeeSetting};
     use test_tube_prov::module::Module;
-    use test_tube_prov::runner::*;
 
     #[test]
     fn test_init_accounts() {
@@ -268,7 +267,7 @@ mod tests {
         let alice = app.init_account(&coins(initial_balance, "nhash")).unwrap();
         let bob = app.init_account(&coins(initial_balance, "nhash")).unwrap();
 
-        let amount = Coin::new(1_000_000u128, "nhash");
+        let amount = Coin::new(200_000_000_000u128, "nhash");
         let gas_limit = 100_000_000;
 
         // use FeeSetting::Auto by default, so should not equal newly custom fee setting
