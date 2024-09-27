@@ -6,8 +6,7 @@ use provwasm_std::types::provenance::exchange::v1::{
     MsgCreateBidResponse, MsgCreatePaymentRequest, MsgCreatePaymentResponse, MsgFillAsksRequest,
     MsgFillAsksResponse, MsgFillBidsRequest, MsgFillBidsResponse, MsgGovCloseMarketRequest,
     MsgGovCloseMarketResponse, MsgGovCreateMarketRequest, MsgGovCreateMarketResponse,
-    MsgGovManageFeesRequest, MsgGovManageFeesResponse, MsgGovUpdateParamsRequest,
-    MsgGovUpdateParamsResponse, MsgMarketCommitmentSettleRequest,
+    MsgGovManageFeesRequest, MsgGovManageFeesResponse, MsgMarketCommitmentSettleRequest,
     MsgMarketCommitmentSettleResponse, MsgMarketManagePermissionsRequest,
     MsgMarketManagePermissionsResponse, MsgMarketManageReqAttrsRequest,
     MsgMarketManageReqAttrsResponse, MsgMarketReleaseCommitmentsRequest,
@@ -163,10 +162,6 @@ where
 
     fn_execute! {
         pub gov_close_market: MsgGovCloseMarketRequest["/provenance.exchange.v1.MsgGovCloseMarketRequest"] => MsgGovCloseMarketResponse
-    }
-
-    fn_execute! {
-        pub gov_update_params: MsgGovUpdateParamsRequest["/provenance.exchange.v1.MsgGovUpdateParamsRequest"] => MsgGovUpdateParamsResponse
     }
 
     fn_query! {

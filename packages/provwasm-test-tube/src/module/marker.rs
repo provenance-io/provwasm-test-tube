@@ -14,9 +14,8 @@ use provwasm_std::types::provenance::marker::v1::{
     MsgSupplyDecreaseProposalRequest, MsgSupplyDecreaseProposalResponse,
     MsgSupplyIncreaseProposalRequest, MsgSupplyIncreaseProposalResponse, MsgTransferRequest,
     MsgTransferResponse, MsgUpdateForcedTransferRequest, MsgUpdateForcedTransferResponse,
-    MsgUpdateParamsRequest, MsgUpdateParamsResponse, MsgUpdateRequiredAttributesRequest,
-    MsgUpdateRequiredAttributesResponse, MsgUpdateSendDenyListRequest,
-    MsgUpdateSendDenyListResponse, MsgWithdrawEscrowProposalRequest,
+    MsgUpdateRequiredAttributesRequest, MsgUpdateRequiredAttributesResponse,
+    MsgUpdateSendDenyListRequest, MsgUpdateSendDenyListResponse, MsgWithdrawEscrowProposalRequest,
     MsgWithdrawEscrowProposalResponse, MsgWithdrawRequest, MsgWithdrawResponse, QueryAccessRequest,
     QueryAccessResponse, QueryAccountDataRequest, QueryAccountDataResponse, QueryAllMarkersRequest,
     QueryAllMarkersResponse, QueryDenomMetadataRequest, QueryDenomMetadataResponse,
@@ -147,10 +146,6 @@ where
 
     fn_execute! {
         pub set_denom_metadata_proposal: MsgSetDenomMetadataProposalRequest["/provenance.marker.v1.MsgSetDenomMetadataProposalRequest"] => MsgSetDenomMetadataProposalResponse
-    }
-
-    fn_execute! {
-        pub update_params: MsgUpdateParamsRequest["/provenance.marker.v1.MsgUpdateParamsRequest"] => MsgUpdateParamsResponse
     }
 
     fn_query! {
