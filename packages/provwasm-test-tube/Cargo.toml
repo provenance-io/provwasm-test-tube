@@ -1,9 +1,9 @@
 [package]
 name = "provwasm-test-tube"
-version = "0.1.0-rc1"
+version = { workspace = true }
 repository = "https://github.com/provenance-io/provwasm-test-tube"
-edition = "2021"
-license = "Apache-2.0"
+edition = { workspace = true }
+license = { workspace = true }
 authors = ["Ken Talley <4344285+kwtalley@users.noreply.github.com"]
 description = "library for building smart contract integration testing environments for Provenance Blockchain in Rust"
 keywords = ["provenance", "blockchain", "smart-contracts", "defi", "finance"]
@@ -13,20 +13,20 @@ categories = ["api-bindings", "cryptography::cryptocurrencies", "wasm"]
 exclude = ["provenance", "test_artifacts"]
 
 [dependencies]
-base64 = "0.22.0"
-cosmrs = { version = "0.20.0", features = ["cosmwasm"] }
-cosmwasm-std = "2.1.3"
-provwasm-std = { git = "https://github.com/provenance-io/provwasm.git", branch = "main" }
-prost = { version = "0.13.2", default-features = false, features = ["prost-derive"] }
-serde = "1.0.197"
-serde_json = "1.0.115"
-test-tube-prov = { version = "0.1.0-rc1", path = "../test-tube" }
-thiserror = "1.0.58"
+base64 = { workspace = true }
+cosmrs = { workspace = true }
+cosmwasm-std = { workspace = true }
+provwasm-std = { workspace = true }
+prost = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+test-tube-prov = { workspace = true }
+thiserror = { workspace = true }
 
 [build-dependencies]
 bindgen = "0.69.1"
 
 [dev-dependencies]
 cw1-whitelist = "2.0.0"
-rayon = "1.5.3"
-marker = { version = "2.2.0", git = "https://github.com/provenance-io/provwasm" }
+rayon = { workspace = true }
+marker = { git = "https://github.com/provenance-io/provwasm", branch = "main" }
