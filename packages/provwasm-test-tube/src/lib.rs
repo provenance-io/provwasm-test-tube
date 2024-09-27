@@ -1,5 +1,6 @@
 #![doc = include_str!("../README.md")]
 
+#[allow(deprecated)]
 mod module;
 mod runner;
 
