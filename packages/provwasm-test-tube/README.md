@@ -17,6 +17,7 @@ contract against real chain's logic instead of mocks.
 
 | provwasm-test-tube | provwasm | provenance |
 |--------------------|----------|------------|
+| 0.2.0              | 2.4.0    | 1.19.1     |
 | 0.1.0              | 2.2.0    | 1.18.0     |
 
 ## Getting Started
@@ -27,7 +28,7 @@ contract: [marker](https://github.com/provenance-io/provwasm/contracts/marker).
 Here is how to setup the test:
 
 ```rust
-use cosmwasm_std::Coin;
+use cosmwasm_std::coin;
 use provwasm_test_tube::{ProvwasmTestApp, RunnerError};
 
 #[test]
@@ -36,7 +37,7 @@ fn test() -> Result<(), RunnerError> {
     let app = ProvwasmTestApp::new();
 
     // create new account with initial funds
-    let accs = app.init_accounts(&[Coin::new(1_000_000_000_000, "nhash")], 2)?;
+    let accs = app.init_accounts(&[coin(1_000_000_000_000, "nhash")], 2)?;
 
     let admin = &accs[0];
     let new_admin = &accs[1];
@@ -53,13 +54,13 @@ Note that `init_accounts` is a convenience function that creates multiple accoun
 If you want to create just one account, you can use `init_account` instead.
 
 ```rust
-use cosmwasm_std::Coin;
+use cosmwasm_std::coin;
 use provwasm_test_tube::{ProvwasmTestApp, RunnerError};
 
 fn test() -> Result<(), RunnerError> {
     let app = ProvwasmTestApp::new();
 
-    let account = app.init_account(&[Coin::new(1_000_000_000_000, "nhash")])?;
+    let account = app.init_account(&[coin(1_000_000_000_000, "nhash")])?;
 
     Ok(())
 }
@@ -74,13 +75,13 @@ Now if we want to test a provwasm contract, we need to
 Then we can start interacting with our contract
 
 ```rust
-use cosmwasm_std::Coin;
+use cosmwasm_std::coin;
 use provwasm_test_tube::wasm::Wasm;
 use provwasm_test_tube::{Module, ProvwasmTestApp, RunnerError};
 
 fn test() -> Result<(), RunnerError> {
     let app = ProvwasmTestApp::default();
-    let accs = app.init_accounts(&[Coin::new(100_000_000_000_000, "nhash")], 1)?;
+    let accs = app.init_accounts(&[coin(100_000_000_000_000, "nhash")], 1)?;
     let admin = &accs[0];
 
     let wasm = Wasm::new(&app);
@@ -95,7 +96,7 @@ fn test() -> Result<(), RunnerError> {
 Now let's execute the contract and verify that the contract's state is updated properly.
 
 ```rust
-use cosmwasm_std::{Coin, Uint128};
+use cosmwasm_std::{coin, Binary, Coin, Uint128};
 use provwasm_test_tube::wasm::Wasm;
 use provwasm_test_tube::{Account, Module, ProvwasmTestApp, RunnerError};
 
@@ -105,7 +106,7 @@ use marker::types::Marker;
 #[test]
 fn create_and_withdraw() -> Result<(), RunnerError> {
     let app = ProvwasmTestApp::default();
-    let accs = app.init_accounts(&[Coin::new(100_000_000_000_000, "nhash")], 1)?;
+    let accs = app.init_accounts(&[coin(100_000_000_000_000, "nhash")], 1)?;
     let admin = &accs[0];
 
     let wasm = Wasm::new(&app);
@@ -122,7 +123,7 @@ fn create_and_withdraw() -> Result<(), RunnerError> {
                 name: "marker-test.sc.pb".to_string(),
             },
             Some(&admin.address()),
-            None,
+            Some("marker test"),
             &[],
             admin,
         )?
@@ -205,20 +206,18 @@ Module wrappers provides convenient functions to interact with the appchain's mo
 Let's try interact with the `Marker` module:
 
 ```rust
-use std::convert::TryFrom;
-
-use cosmwasm_std::{Coin, Uint128};
+use cosmwasm_std::{coin, Coin, Uint128};
 use provwasm_test_tube::{Account, Module, ProvwasmTestApp, RunnerError};
 
-use provwasm_std::types::provenance::marker::v1::{
+use provwasm_test_tube::provwasm_std::types::provenance::marker::v1::{
     Access, AccessGrant, MarkerAccount, MarkerStatus, MarkerType, MsgAddMarkerRequest,
     QueryMarkerRequest,
 };
 
 #[test]
-fn create_and_withdraw() -> Result<(), RunnerError> {
+fn custom_module() -> Result<(), RunnerError> {
     let app = ProvwasmTestApp::default();
-    let accs = app.init_accounts(&[Coin::new(100_000_000_000_000, "nhash")], 1)?;
+    let accs = app.init_accounts(&[coin(100_000_000_000_000, "nhash")], 1)?;
     let admin = &accs[0];
 
     let marker_module = provwasm_test_tube::marker::Marker::new(&app);

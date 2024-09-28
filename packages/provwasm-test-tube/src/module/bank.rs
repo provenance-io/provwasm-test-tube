@@ -1,7 +1,8 @@
 use provwasm_std::types::cosmos::bank::v1beta1::{
-    MsgMultiSend, MsgMultiSendResponse, MsgSend, MsgSendResponse, QueryBalanceRequest,
-    QueryBalanceResponse, QueryDenomMetadataRequest, QueryDenomMetadataResponse,
-    QueryParamsRequest, QueryParamsResponse, QuerySupplyOfRequest, QuerySupplyOfResponse,
+    MsgMultiSend, MsgMultiSendResponse, MsgSend, MsgSendResponse, QueryAllBalancesRequest,
+    QueryAllBalancesResponse, QueryBalanceRequest, QueryBalanceResponse, QueryDenomMetadataRequest,
+    QueryDenomMetadataResponse, QueryParamsRequest, QueryParamsResponse, QuerySupplyOfRequest,
+    QuerySupplyOfResponse,
 };
 
 use test_tube_prov::module::Module;
@@ -31,6 +32,10 @@ where
 
     fn_query! {
         pub query_balance ["/cosmos.bank.v1beta1.Query/Balance"]: QueryBalanceRequest => QueryBalanceResponse
+    }
+
+    fn_query! {
+        pub query_all_balances ["/cosmos.bank.v1beta1.Query/AllBalances"]: QueryAllBalancesRequest => QueryAllBalancesResponse
     }
 
     fn_query! {

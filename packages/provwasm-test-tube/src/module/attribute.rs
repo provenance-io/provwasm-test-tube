@@ -1,8 +1,10 @@
 use provwasm_std::types::provenance::attribute::v1::{
     MsgAddAttributeRequest, MsgAddAttributeResponse, MsgDeleteAttributeRequest,
     MsgDeleteAttributeResponse, MsgDeleteDistinctAttributeRequest, MsgUpdateAttributeRequest,
-    QueryAttributeRequest, QueryAttributeResponse, QueryAttributesRequest, QueryAttributesResponse,
-    QueryParamsRequest, QueryParamsResponse, QueryScanRequest, QueryScanResponse,
+    QueryAccountDataRequest, QueryAccountDataResponse, QueryAttributeAccountsRequest,
+    QueryAttributeAccountsResponse, QueryAttributeRequest, QueryAttributeResponse,
+    QueryAttributesRequest, QueryAttributesResponse, QueryParamsRequest, QueryParamsResponse,
+    QueryScanRequest, QueryScanResponse,
 };
 
 use test_tube_prov::module::Module;
@@ -39,18 +41,26 @@ where
     }
 
     fn_query! {
-        pub query_attribute ["/provenance.attribute.v1.Query/Params"]: QueryAttributeRequest => QueryAttributeResponse
+        pub query_attribute ["/provenance.attribute.v1.Query/Attribute"]: QueryAttributeRequest => QueryAttributeResponse
     }
 
     fn_query! {
-        pub query_attributes ["/provenance.attribute.v1.Query/Attribute"]: QueryAttributesRequest => QueryAttributesResponse
+        pub query_attributes ["/provenance.attribute.v1.Query/Attributes"]: QueryAttributesRequest => QueryAttributesResponse
     }
 
     fn_query! {
-        pub query_params ["/provenance.attribute.v1.Query/Attributes"]: QueryParamsRequest => QueryParamsResponse
+        pub query_params ["/provenance.attribute.v1.Query/Params"]: QueryParamsRequest => QueryParamsResponse
     }
 
     fn_query! {
         pub query_scan ["/provenance.attribute.v1.Query/Scan"]: QueryScanRequest => QueryScanResponse
+    }
+
+    fn_query! {
+        pub query_attribute_accounts ["/provenance.attribute.v1.Query/AttributeAccounts"]: QueryAttributeAccountsRequest => QueryAttributeAccountsResponse
+    }
+
+    fn_query! {
+        pub query_account_data ["/provenance.attribute.v1.Query/AccountData"]: QueryAccountDataRequest => QueryAccountDataResponse
     }
 }

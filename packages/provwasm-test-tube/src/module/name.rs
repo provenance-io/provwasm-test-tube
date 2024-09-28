@@ -30,11 +30,11 @@ where
     }
 
     fn_execute! {
-        pub create_root_name: MsgCreateRootNameRequest["/provenance.name.v1.MsgCreateRootNameRequest"] => MsgCreateRootNameResponse
+        pub modify_name: MsgModifyNameRequest["/provenance.name.v1.MsgModifyNameRequest"] => MsgModifyNameResponse
     }
 
     fn_execute! {
-        pub modify_name: MsgModifyNameRequest["/provenance.name.v1.MsgModifyNameRequest"] => MsgModifyNameResponse
+        pub create_root_name: MsgCreateRootNameRequest["/provenance.name.v1.MsgCreateRootNameRequest"] => MsgCreateRootNameResponse
     }
 
     fn_query! {
