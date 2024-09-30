@@ -21,7 +21,8 @@ cw-storage-plus = { version = "2.0.0" }
 ### ProvWasm
 provwasm-mocks = { version = "2.4.0" }
 provwasm-std = { version = "2.4.0" }
-test-tube-prov = { path = "packages/test-tube" }
+provwasm-test-tube = { version = "0.2.0", path = "packages/provwasm-test-tube" }
+test-tube-prov = { version = "0.2.0", path = "packages/test-tube" }
 
 base64 = "0.22.0"
 chrono = { version = "0.4.37", default-features = false }
