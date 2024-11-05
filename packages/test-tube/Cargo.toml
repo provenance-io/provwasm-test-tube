@@ -18,13 +18,6 @@ wasm-sudo = []
 base64 = { workspace = true }
 cosmrs = { workspace = true }
 cosmwasm-std = { workspace = true }
-provwasm-std = { workspace = true }
 prost = { workspace = true }
-serde = { workspace = true }
 serde_json = { workspace = true }
-tendermint-proto = "0.32.0"
 thiserror = { workspace = true }
-
-[dev-dependencies]
-cw1-whitelist = "2.0.0"
-rayon = { workspace = true }
