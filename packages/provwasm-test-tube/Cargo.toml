@@ -13,7 +13,6 @@ categories = ["api-bindings", "cryptography::cryptocurrencies", "wasm"]
 exclude = ["provenance", "test_artifacts"]
 
 [dependencies]
-base64 = { workspace = true }
 cosmrs = { workspace = true }
 cosmwasm-std = { workspace = true }
 provwasm-std = { workspace = true }
@@ -21,12 +20,9 @@ prost = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 test-tube-prov = { workspace = true }
-thiserror = { workspace = true }
 
 [build-dependencies]
 bindgen = "0.69.1"
 
 [dev-dependencies]
 cw1-whitelist = "2.0.0"
-rayon = { workspace = true }
-marker = { git = "https://github.com/provenance-io/provwasm", branch = "main" }
