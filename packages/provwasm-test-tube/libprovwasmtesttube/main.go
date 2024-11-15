@@ -20,7 +20,6 @@ import (
 	abci "github.com/cometbft/cometbft/abci/types"
 	// cosmos sdk
 
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -261,74 +260,6 @@ func Simulate(envId uint64, base64TxBytes string) *C.char { // => base64GasInfo
 	}
 
 	bz, err := proto.Marshal(&gasInfo)
-	if err != nil {
-		panic(err)
-	}
-
-	return encodeBytesResultBytes(bz)
-}
-
-//export SetParamSet
-func SetParamSet(envId uint64, subspaceName, base64ParamSetBytes string) *C.char {
-	env := loadEnv(envId)
-
-	// Temp fix for concurrency issue
-	mu.Lock()
-	defer mu.Unlock()
-
-	paramSetBytes, err := base64.StdEncoding.DecodeString(base64ParamSetBytes)
-	if err != nil {
-		panic(err)
-	}
-
-	subspace, ok := env.App.ParamsKeeper.GetSubspace(subspaceName)
-	if !ok {
-		err := errors.New("No subspace found for `" + subspaceName + "`")
-		return encodeErrToResultBytes(result.ExecuteError, err)
-	}
-
-	pReg := env.ParamTypesRegistry
-
-	any := codectypes.Any{}
-	err = proto.Unmarshal(paramSetBytes, &any)
-
-	if err != nil {
-		return encodeErrToResultBytes(result.ExecuteError, err)
-	}
-
-	pset, err := pReg.UnpackAny(&any)
-
-	if err != nil {
-		return encodeErrToResultBytes(result.ExecuteError, err)
-	}
-
-	subspace.SetParamSet(env.Ctx, pset)
-
-	// return empty bytes if no error
-	return encodeBytesResultBytes([]byte{})
-}
-
-//export GetParamSet
-func GetParamSet(envId uint64, subspaceName, typeUrl string) *C.char {
-	env := loadEnv(envId)
-
-	subspace, ok := env.App.ParamsKeeper.GetSubspace(subspaceName)
-	if !ok {
-		err := errors.New("No subspace found for `" + subspaceName + "`")
-		return encodeErrToResultBytes(result.ExecuteError, err)
-	}
-
-	pReg := env.ParamTypesRegistry
-	pset, ok := pReg.GetEmptyParamsSet(typeUrl)
-
-	if !ok {
-		err := errors.New("No param set found for `" + typeUrl + "`")
-		return encodeErrToResultBytes(result.ExecuteError, err)
-	}
-	subspace.GetParamSet(env.Ctx, pset)
-
-	bz, err := proto.Marshal(pset)
-
 	if err != nil {
 		panic(err)
 	}

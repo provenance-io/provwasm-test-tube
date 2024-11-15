@@ -11,7 +11,7 @@ use prost::Message;
 
 use crate::account::{Account, FeeSetting, SigningAccount};
 use crate::bindings::{
-    AccountNumber, AccountSequence, FinalizeBlock, GetBlockHeight, GetBlockTime, GetParamSet,
+    AccountNumber, AccountSequence, FinalizeBlock, GetBlockHeight, GetBlockTime,
     GetValidatorAddress, GetValidatorPrivateKey, IncreaseTime, InitAccount, InitTestEnv, Query,
     Simulate,
 };
@@ -271,22 +271,6 @@ impl BaseApp {
         };
 
         res
-    }
-
-    /// Get parameter set for a given subspace.
-    pub fn get_param_set<P: Message + Default>(
-        &self,
-        subspace: &str,
-        type_url: &str,
-    ) -> RunnerResult<P> {
-        unsafe {
-            redefine_as_go_string!(subspace);
-            redefine_as_go_string!(type_url);
-            let pset = GetParamSet(self.id, subspace, type_url);
-            let pset = RawResult::from_non_null_ptr(pset).into_result()?;
-            let pset = P::decode(pset.as_slice()).map_err(DecodeError::ProtoDecodeError)?;
-            Ok(pset)
-        }
     }
 }
 

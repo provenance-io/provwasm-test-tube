@@ -1,5 +1,4 @@
 use cosmwasm_std::Coin;
-use prost::Message;
 use test_tube_prov::account::SigningAccount;
 use test_tube_prov::runner::result::{RunnerExecuteResult, RunnerResult};
 use test_tube_prov::runner::Runner;
@@ -94,15 +93,6 @@ impl ProvwasmTestApp {
         I: IntoIterator<Item = cosmrs::Any>,
     {
         self.inner.simulate_tx(msgs, signer)
-    }
-
-    /// Get parameter set for a given subspace.
-    pub fn get_param_set<P: Message + Default>(
-        &self,
-        subspace: &str,
-        type_url: &str,
-    ) -> RunnerResult<P> {
-        self.inner.get_param_set(subspace, type_url)
     }
 }
 
