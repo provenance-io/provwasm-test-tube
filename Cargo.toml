@@ -6,7 +6,7 @@ members = [
 ]
 
 [workspace.package]
-version = "0.2.0"
+version = "0.3.0"
 repository = "https://github.com/provenance-io/provwasm-test-tube"
 edition = "2021"
 license = "Apache-2.0"
@@ -19,14 +19,14 @@ cosmwasm-std = { version = "2.1.3", default-features = false, features = ["cosmw
 cw-storage-plus = { version = "2.0.0" }
 
 ### ProvWasm
-provwasm-mocks = { version = "2.4.0" }
-provwasm-std = { version = "2.4.0" }
-provwasm-test-tube = { version = "0.2.0", path = "packages/provwasm-test-tube" }
-test-tube-prov = { version = "0.2.0", path = "packages/test-tube" }
+provwasm-mocks = { version = "2.5.0" }
+provwasm-std = { version = "2.5.0" }
+provwasm-test-tube = { version = "0.3.0", path = "packages/provwasm-test-tube" }
+test-tube-prov = { version = "0.3.0", path = "packages/test-tube" }
 
 base64 = "0.22.0"
 chrono = { version = "0.4.37", default-features = false }
-cosmrs = { version = "0.20.0", default-features = false, features = ["cosmwasm", "rpc"] }
+cosmrs = { version = "0.21.0", default-features = false, features = ["cosmwasm", "rpc"] }
 prost = { version = "0.13.2", default-features = false, features = [
     "prost-derive",
 ] }
