@@ -1,10 +1,5 @@
 use provwasm_std::types::provenance::attribute::v1::{
-    MsgAddAttributeRequest, MsgAddAttributeResponse, MsgDeleteAttributeRequest,
-    MsgDeleteAttributeResponse, MsgDeleteDistinctAttributeRequest, MsgUpdateAttributeRequest,
-    QueryAccountDataRequest, QueryAccountDataResponse, QueryAttributeAccountsRequest,
-    QueryAttributeAccountsResponse, QueryAttributeRequest, QueryAttributeResponse,
-    QueryAttributesRequest, QueryAttributesResponse, QueryParamsRequest, QueryParamsResponse,
-    QueryScanRequest, QueryScanResponse,
+    MsgAddAttributeRequest, MsgAddAttributeResponse, MsgDeleteAttributeRequest, MsgDeleteAttributeResponse, MsgDeleteDistinctAttributeRequest, MsgSetAccountDataRequest, MsgSetAccountDataResponse, MsgUpdateAttributeExpirationRequest, MsgUpdateAttributeExpirationResponse, MsgUpdateAttributeRequest, MsgUpdateAttributeResponse, QueryAccountDataRequest, QueryAccountDataResponse, QueryAttributeAccountsRequest, QueryAttributeAccountsResponse, QueryAttributeRequest, QueryAttributeResponse, QueryAttributesRequest, QueryAttributesResponse, QueryParamsRequest, QueryParamsResponse, QueryScanRequest, QueryScanResponse
 };
 
 use test_tube_prov::module::Module;
@@ -29,7 +24,11 @@ where
     }
 
     fn_execute! {
-        pub update_attribute: MsgUpdateAttributeRequest["/provenance.attribute.v1.MsgUpdateAttributeRequest"] => MsgAddAttributeResponse
+        pub update_attribute: MsgUpdateAttributeRequest["/provenance.attribute.v1.MsgUpdateAttributeRequest"] => MsgUpdateAttributeResponse
+    }
+
+    fn_execute! {
+        pub update_attribute_expiration: MsgUpdateAttributeExpirationRequest["/provenance.attribute.v1.MsgUpdateAttributeExpirationRequest"] => MsgUpdateAttributeExpirationResponse
     }
 
     fn_execute! {
@@ -38,6 +37,10 @@ where
 
     fn_execute! {
         pub delete_distinct_attribute: MsgDeleteDistinctAttributeRequest["/provenance.attribute.v1.MsgDeleteDistinctAttributeRequest"] => MsgAddAttributeResponse
+    }
+
+    fn_execute! {
+        pub set_account_data: MsgSetAccountDataRequest["/provenance.attribute.v1.MsgSetAccountDataRequest"] => MsgSetAccountDataResponse
     }
 
     fn_query! {
