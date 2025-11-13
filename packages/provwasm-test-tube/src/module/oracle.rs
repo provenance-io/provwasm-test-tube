@@ -20,18 +20,18 @@ where
     R: Runner<'a>,
 {
     fn_execute! {
-        pub update_oracle: MsgUpdateOracleRequest["/provenance.name.v1.MsgUpdateOracleRequest"] => MsgUpdateOracleResponse
+        pub update_oracle: MsgUpdateOracleRequest["/provenance.oracle.v1.MsgUpdateOracleRequest"] => MsgUpdateOracleResponse
     }
 
     fn_execute! {
-        pub send_query_oracle: MsgSendQueryOracleRequest["/provenance.name.v1.MsgSendQueryOracleRequest"] => MsgSendQueryOracleResponse
+        pub send_query_oracle: MsgSendQueryOracleRequest["/provenance.oracle.v1.MsgSendQueryOracleRequest"] => MsgSendQueryOracleResponse
     }
 
     fn_query! {
-        pub query_oracle_address ["/provenance.name.v1.Query/OracleAddress"]: QueryOracleAddressRequest => QueryOracleAddressResponse
+        pub query_oracle_address ["/provenance.oracle.v1.Query/OracleAddress"]: QueryOracleAddressRequest => QueryOracleAddressResponse
     }
 
     fn_query! {
-        pub query_oracle ["/provenance.name.v1.Query/Oracle"]: QueryOracleRequest => QueryOracleResponse
+        pub query_oracle ["/provenance.oracle.v1.Query/Oracle"]: QueryOracleRequest => QueryOracleResponse
     }
 }
