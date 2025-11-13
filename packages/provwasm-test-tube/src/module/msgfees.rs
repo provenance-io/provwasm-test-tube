@@ -1,10 +1,13 @@
+use provwasm_std::types::provenance::flatfees::v1::{
+    QueryAllMsgFeesRequest, QueryAllMsgFeesResponse, QueryMsgFeeRequest, QueryMsgFeeResponse,
+    QueryParamsRequest, QueryParamsResponse,
+};
 use provwasm_std::types::provenance::msgfees::v1::{
     MsgAddMsgFeeProposalRequest, MsgAddMsgFeeProposalResponse, MsgAssessCustomMsgFeeRequest,
     MsgAssessCustomMsgFeeResponse, MsgRemoveMsgFeeProposalRequest, MsgRemoveMsgFeeProposalResponse,
     MsgUpdateConversionFeeDenomProposalRequest, MsgUpdateConversionFeeDenomProposalResponse,
     MsgUpdateMsgFeeProposalRequest, MsgUpdateMsgFeeProposalResponse,
     MsgUpdateNhashPerUsdMilProposalRequest, MsgUpdateNhashPerUsdMilProposalResponse,
-    QueryAllMsgFeesRequest, QueryAllMsgFeesResponse, QueryParamsRequest, QueryParamsResponse,
 };
 use test_tube_prov::{fn_execute, fn_query, Module, Runner};
 
@@ -47,10 +50,14 @@ where
     }
 
     fn_query! {
-        pub query_params ["/provenance.msgfees.v1.Query/Params"]: QueryParamsRequest => QueryParamsResponse
+        pub query_params ["/provenance.flatfees.v1.Query/Params"]: QueryParamsRequest => QueryParamsResponse
     }
 
     fn_query! {
-        pub query_all_msg_fees ["/provenance.msgfees.v1.Query/QueryAllMsgFees"]: QueryAllMsgFeesRequest => QueryAllMsgFeesResponse
+        pub query_all_msg_fees ["/provenance.flatfees.v1.Query/AllMsgFees"]: QueryAllMsgFeesRequest => QueryAllMsgFeesResponse
+    }
+
+    fn_query! {
+        pub query_msg_fee ["/provenance.flatfees.v1.Query/MsgFee"]: QueryMsgFeeRequest => QueryMsgFeeResponse
     }
 }
