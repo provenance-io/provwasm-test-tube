@@ -18,7 +18,8 @@ use provwasm_std::types::provenance::exchange::v1::{
     MsgMarketUpdateIntermediaryDenomRequest, MsgMarketUpdateIntermediaryDenomResponse,
     MsgMarketUpdateUserSettleRequest, MsgMarketUpdateUserSettleResponse, MsgMarketWithdrawRequest,
     MsgMarketWithdrawResponse, MsgRejectPaymentRequest, MsgRejectPaymentResponse,
-    MsgRejectPaymentsRequest, MsgRejectPaymentsResponse, QueryGetAccountCommitmentsRequest,
+    MsgRejectPaymentsRequest, MsgRejectPaymentsResponse, QueryCommitmentSettlementFeeCalcRequest,
+    QueryCommitmentSettlementFeeCalcResponse, QueryGetAccountCommitmentsRequest,
     QueryGetAccountCommitmentsResponse, QueryGetAllCommitmentsRequest,
     QueryGetAllCommitmentsResponse, QueryGetAllMarketsRequest, QueryGetAllMarketsResponse,
     QueryGetAllOrdersRequest, QueryGetAllOrdersResponse, QueryGetAllPaymentsRequest,
@@ -29,9 +30,9 @@ use provwasm_std::types::provenance::exchange::v1::{
     QueryGetOrderByExternalIdResponse, QueryGetOrderRequest, QueryGetOrderResponse,
     QueryGetOwnerOrdersRequest, QueryGetOwnerOrdersResponse, QueryGetPaymentRequest,
     QueryGetPaymentResponse, QueryGetPaymentsWithSourceRequest, QueryGetPaymentsWithSourceResponse,
-    QueryGetPaymentsWithTargetRequest, QueryOrderFeeCalcRequest, QueryOrderFeeCalcResponse,
-    QueryParamsRequest, QueryParamsResponse, QueryPaymentFeeCalcRequest,
-    QueryPaymentFeeCalcResponse, QueryValidateCreateMarketRequest,
+    QueryGetPaymentsWithTargetRequest, QueryGetPaymentsWithTargetResponse,
+    QueryOrderFeeCalcRequest, QueryOrderFeeCalcResponse, QueryParamsRequest, QueryParamsResponse,
+    QueryPaymentFeeCalcRequest, QueryPaymentFeeCalcResponse, QueryValidateCreateMarketRequest,
     QueryValidateCreateMarketResponse, QueryValidateManageFeesRequest,
     QueryValidateManageFeesResponse, QueryValidateMarketRequest, QueryValidateMarketResponse,
 };
@@ -145,7 +146,7 @@ where
     }
 
     fn_execute! {
-        pub cancel_payments: MsgCancelPaymentsRequest["/provenance.exchange.v1.MsgCancelPaymentsResponse"] => MsgCancelPaymentsResponse
+        pub cancel_payments: MsgCancelPaymentsRequest["/provenance.exchange.v1.MsgCancelPaymentsRequest"] => MsgCancelPaymentsResponse
     }
 
     fn_execute! {
@@ -221,6 +222,10 @@ where
     }
 
     fn_query! {
+        pub query_commitment_settlement_fee_calc ["/provenance.exchange.v1.Query/CommitmentSettlementFeeCalc"]: QueryCommitmentSettlementFeeCalcRequest => QueryCommitmentSettlementFeeCalcResponse
+    }
+
+    fn_query! {
         pub query_validate_create_market ["/provenance.exchange.v1.Query/ValidateCreateMarket"]: QueryValidateCreateMarketRequest => QueryValidateCreateMarketResponse
     }
 
@@ -241,7 +246,7 @@ where
     }
 
     fn_query! {
-        pub query_get_payments_with_target ["/provenance.exchange.v1.Query/GetPaymentsWithTarget"]: QueryGetPaymentsWithTargetRequest => QueryGetPaymentsWithTargetRequest
+        pub query_get_payments_with_target ["/provenance.exchange.v1.Query/GetPaymentsWithTarget"]: QueryGetPaymentsWithTargetRequest => QueryGetPaymentsWithTargetResponse
     }
 
     fn_query! {
