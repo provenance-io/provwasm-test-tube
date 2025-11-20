@@ -6,6 +6,7 @@ pub mod attribute;
 pub mod authz;
 pub mod bank;
 pub mod exchange;
+pub mod flatfees;
 pub mod gov;
 pub mod hold;
 pub mod ledger;
