@@ -1,9 +1,7 @@
 [workspace]
 resolver = "2"
 
-members = [
-    "packages/*",
-]
+members = ["packages/*", "integration_tests"]
 
 [workspace.package]
 version = "0.4.0-rc1"
@@ -15,7 +13,11 @@ license = "Apache-2.0"
 ### CosmWasm
 
 cosmwasm-schema = { version = "2.2.2" }
-cosmwasm-std = { version = "2.2.2", default-features = false, features = ["cosmwasm_2_1", "stargate", "std"] }
+cosmwasm-std = { version = "2.2.2", default-features = false, features = [
+    "cosmwasm_2_1",
+    "stargate",
+    "std",
+] }
 cw-storage-plus = { version = "2.0.0" }
 
 ### ProvWasm
@@ -26,16 +28,24 @@ test-tube-prov = { version = "0.4.0-rc1", path = "packages/test-tube" }
 
 base64 = "0.22.0"
 chrono = { version = "0.4.37", default-features = false }
-cosmrs = { version = "0.21.0", default-features = false, features = ["cosmwasm", "rpc"] }
+cosmrs = { version = "0.21.0", default-features = false, features = [
+    "cosmwasm",
+    "rpc",
+] }
 prost = { version = "0.13.2", default-features = false, features = [
     "prost-derive",
 ] }
 rayon = "1.5.3"
-serde = { version = "1.0.197", default-features = false, features = [
-    "derive",
-] }
+serde = { version = "1.0.197", default-features = false, features = ["derive"] }
 serde_json = { version = "1.0.115", features = ["std"] }
 thiserror = { version = "1.0.58" }
+
+# Patch provwasm-std from git dependencies to use the released crates.io version
+# This ensures all provwasm-std dependencies resolve to the same released version,
+# even when contracts are pulled from git (which aren't published to crates.io).
+# This fixes multiple `requires_provenance` from multiple provwasm-std dependencies.
+[patch."https://github.com/provenance-io/provwasm"]
+provwasm-std = { version = "2.7.0-rc1" }
 
 [profile.release]
 opt-level = 3
