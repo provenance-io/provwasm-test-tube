@@ -13,10 +13,8 @@ fn create_update_delete_attr() -> Result<(), RunnerError> {
     let admin = &accs[0];
 
     let wasm = Wasm::new(&app);
-    let wasm_byte_code = std::fs::read(
-        format!("{}/wasm/attrs.wasm", env!("CARGO_MANIFEST_DIR")),
-    )
-    .unwrap();
+    let wasm_byte_code =
+        std::fs::read(format!("{}/wasm/attrs.wasm", env!("CARGO_MANIFEST_DIR"))).unwrap();
     let store_res = wasm.store_code(&wasm_byte_code, None, admin);
     let code_id = store_res?.data.code_id;
     assert_eq!(code_id, 1);

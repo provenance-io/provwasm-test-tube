@@ -29,23 +29,16 @@ pub struct BaseApp {
     fee_denom: String,
     chain_id: String,
     address_prefix: String,
-    default_gas_adjustment: f64,
 }
 
 impl BaseApp {
-    pub fn new(
-        fee_denom: &str,
-        chain_id: &str,
-        address_prefix: &str,
-        default_gas_adjustment: f64,
-    ) -> Self {
+    pub fn new(fee_denom: &str, chain_id: &str, address_prefix: &str) -> Self {
         let id = unsafe { InitTestEnv() };
         BaseApp {
             id,
             fee_denom: fee_denom.to_string(),
             chain_id: chain_id.to_string(),
             address_prefix: address_prefix.to_string(),
-            default_gas_adjustment,
         }
     }
 
@@ -86,7 +79,6 @@ impl BaseApp {
     pub fn get_first_validator_signing_account(
         &self,
         denom: String,
-        gas_adjustment: f64,
     ) -> RunnerResult<SigningAccount> {
         let pkey = unsafe {
             let pkey = GetValidatorPrivateKey(self.id, 0);
@@ -109,7 +101,6 @@ impl BaseApp {
             signing_key,
             FeeSetting::Auto {
                 gas_price: Coin::new(PROVENANCE_MIN_GAS_PRICE, denom),
-                gas_adjustment,
             },
         );
 
@@ -162,7 +153,6 @@ impl BaseApp {
             signing_key,
             FeeSetting::Auto {
                 gas_price: Coin::new(PROVENANCE_MIN_GAS_PRICE, self.fee_denom.clone()),
-                gas_adjustment: self.default_gas_adjustment,
             },
         ))
     }
@@ -251,13 +241,9 @@ impl BaseApp {
         I: IntoIterator<Item = cosmrs::Any>,
     {
         let res = match &signer.fee_setting() {
-            FeeSetting::Auto {
-                gas_price,
-                gas_adjustment,
-            } => {
+            FeeSetting::Auto { gas_price } => {
                 let gas_info = self.simulate_tx(msgs, signer)?;
-                let gas_limit = ((gas_info.gas_used as f64) * (gas_adjustment)).ceil() as u64;
-
+                let gas_limit = (gas_info.gas_wanted as f64).ceil() as u64;
                 let amount = cosmrs::Coin {
                     denom: self.fee_denom.parse().unwrap(),
                     amount: (((gas_limit as f64) * (gas_price.amount.u128() as f64)).ceil() as u64)

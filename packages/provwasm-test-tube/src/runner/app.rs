@@ -6,8 +6,7 @@ use test_tube_prov::BaseApp;
 
 const FEE_DENOM: &str = "nhash";
 const PROV_ADDRESS_PREFIX: &str = "tp";
-const CHAIN_ID: &str = "testchain";
-const DEFAULT_GAS_ADJUSTMENT: f64 = 1.5;
+const CHAIN_ID: &str = "testnet";
 
 #[derive(Debug, PartialEq)]
 pub struct ProvwasmTestApp {
@@ -23,12 +22,7 @@ impl Default for ProvwasmTestApp {
 impl ProvwasmTestApp {
     pub fn new() -> Self {
         Self {
-            inner: BaseApp::new(
-                FEE_DENOM,
-                CHAIN_ID,
-                PROV_ADDRESS_PREFIX,
-                DEFAULT_GAS_ADJUSTMENT,
-            ),
+            inner: BaseApp::new(FEE_DENOM, CHAIN_ID, PROV_ADDRESS_PREFIX),
         }
     }
 
@@ -61,10 +55,8 @@ impl ProvwasmTestApp {
     pub fn get_first_validator_signing_account(
         &self,
         denom: String,
-        gas_adjustment: f64,
     ) -> RunnerResult<SigningAccount> {
-        self.inner
-            .get_first_validator_signing_account(denom, gas_adjustment)
+        self.inner.get_first_validator_signing_account(denom)
     }
 
     /// Increase the time of the blockchain by the given number of seconds.
