@@ -116,12 +116,6 @@ impl Account for NonSigningAccount {
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum FeeSetting {
-    Auto {
-        gas_price: Coin,
-        gas_adjustment: f64,
-    },
-    Custom {
-        amount: Coin,
-        gas_limit: u64,
-    },
+    Auto { gas_price: Coin },
+    Custom { amount: Coin, gas_limit: u64 },
 }

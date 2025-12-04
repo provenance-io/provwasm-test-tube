@@ -1,4 +1,5 @@
 use std::ffi::CString;
+use std::sync::{Mutex, OnceLock};
 
 use base64::engine::general_purpose::STANDARD as BASE64_STANDARD;
 use base64::Engine as _;
@@ -12,8 +13,8 @@ use prost::Message;
 use crate::account::{Account, FeeSetting, SigningAccount};
 use crate::bindings::{
     AccountNumber, AccountSequence, FinalizeBlock, GetBlockHeight, GetBlockTime,
-    GetValidatorAddress, GetValidatorPrivateKey, IncreaseTime, InitAccount, InitTestEnv, Query,
-    Simulate,
+    GetFlatFeeLoadingDisabled, GetValidatorAddress, GetValidatorPrivateKey, IncreaseTime,
+    InitAccount, InitTestEnv, Query, SetFlatFeeLoadingDisabled, Simulate,
 };
 use crate::redefine_as_go_string;
 use crate::runner::error::{DecodeError, EncodeError, RunnerError};
@@ -21,7 +22,50 @@ use crate::runner::result::RawResult;
 use crate::runner::result::{RunnerExecuteResult, RunnerResult};
 use crate::runner::Runner;
 
-pub const PROVENANCE_MIN_GAS_PRICE: u128 = 2_500;
+pub const PROVENANCE_MIN_GAS_PRICE: u128 = 1;
+/// Guarantees that only one test environment mutates the shared Go state at a time.
+static ENVIRONMENT_GUARD: OnceLock<Mutex<()>> = OnceLock::new();
+
+/// Configuration flags that control BaseApp initialization.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct BaseAppOptions {
+    /// Denomination used for fees and balances.
+    pub fee_denom: String,
+    /// Chain identifier passed through to the Provenance app.
+    pub chain_id: String,
+    /// Bech32 address prefix used when creating new accounts.
+    pub address_prefix: String,
+    /// Load the embedded Provenance message fees when spinning up the app.
+    pub load_msg_fees: bool,
+}
+
+impl Default for BaseAppOptions {
+    fn default() -> Self {
+        Self {
+            fee_denom: "nhash".to_string(),
+            chain_id: "testchain".to_string(),
+            address_prefix: "tp".to_string(),
+            load_msg_fees: true,
+        }
+    }
+}
+
+impl BaseAppOptions {
+    /// Create a new BaseAppOptions while overriding the chain identifiers commonly
+    /// configured by Provenance-based tests.
+    pub fn new(
+        fee_denom: impl Into<String>,
+        chain_id: impl Into<String>,
+        address_prefix: impl Into<String>,
+    ) -> Self {
+        Self {
+            fee_denom: fee_denom.into(),
+            chain_id: chain_id.into(),
+            address_prefix: address_prefix.into(),
+            load_msg_fees: true,
+        }
+    }
+}
 
 #[derive(Debug, PartialEq)]
 pub struct BaseApp {
@@ -29,23 +73,47 @@ pub struct BaseApp {
     fee_denom: String,
     chain_id: String,
     address_prefix: String,
-    default_gas_adjustment: f64,
+    load_msg_fees: bool,
 }
 
 impl BaseApp {
-    pub fn new(
-        fee_denom: &str,
-        chain_id: &str,
-        address_prefix: &str,
-        default_gas_adjustment: f64,
-    ) -> Self {
+    pub fn new(fee_denom: &str, chain_id: &str, address_prefix: &str) -> Self {
+        Self::new_with_options(BaseAppOptions::new(fee_denom, chain_id, address_prefix))
+    }
+
+    /// Construct a new BaseApp while applying the given configuration options.
+    pub fn new_with_options(options: BaseAppOptions) -> Self {
+        let _env_guard = ENVIRONMENT_GUARD
+            .get_or_init(|| Mutex::new(()))
+            .lock()
+            .unwrap();
+
+        let BaseAppOptions {
+            fee_denom,
+            chain_id,
+            address_prefix,
+            load_msg_fees,
+        } = options;
+
+        // Capture the previous toggle so we can reinstate it once initialization finishes.
+        let previous = unsafe { GetFlatFeeLoadingDisabled() != 0 };
+        unsafe {
+            SetFlatFeeLoadingDisabled(if load_msg_fees { 0 } else { 1 });
+        }
+
         let id = unsafe { InitTestEnv() };
+
+        unsafe {
+            // Restore the previous toggle to keep other test environments consistent.
+            SetFlatFeeLoadingDisabled(if previous { 1 } else { 0 });
+        }
+
         BaseApp {
             id,
-            fee_denom: fee_denom.to_string(),
-            chain_id: chain_id.to_string(),
-            address_prefix: address_prefix.to_string(),
-            default_gas_adjustment,
+            fee_denom,
+            chain_id,
+            address_prefix,
+            load_msg_fees,
         }
     }
 
@@ -86,7 +154,6 @@ impl BaseApp {
     pub fn get_first_validator_signing_account(
         &self,
         denom: String,
-        gas_adjustment: f64,
     ) -> RunnerResult<SigningAccount> {
         let pkey = unsafe {
             let pkey = GetValidatorPrivateKey(self.id, 0);
@@ -109,11 +176,15 @@ impl BaseApp {
             signing_key,
             FeeSetting::Auto {
                 gas_price: Coin::new(PROVENANCE_MIN_GAS_PRICE, denom),
-                gas_adjustment,
             },
         );
 
         Ok(validator)
+    }
+
+    /// Indicates whether embedded message fees were loaded during initialization.
+    pub fn load_msg_fees(&self) -> bool {
+        self.load_msg_fees
     }
 
     /// Get the current block time
@@ -162,7 +233,6 @@ impl BaseApp {
             signing_key,
             FeeSetting::Auto {
                 gas_price: Coin::new(PROVENANCE_MIN_GAS_PRICE, self.fee_denom.clone()),
-                gas_adjustment: self.default_gas_adjustment,
             },
         ))
     }
@@ -251,13 +321,9 @@ impl BaseApp {
         I: IntoIterator<Item = cosmrs::Any>,
     {
         let res = match &signer.fee_setting() {
-            FeeSetting::Auto {
-                gas_price,
-                gas_adjustment,
-            } => {
+            FeeSetting::Auto { gas_price } => {
                 let gas_info = self.simulate_tx(msgs, signer)?;
-                let gas_limit = ((gas_info.gas_used as f64) * (gas_adjustment)).ceil() as u64;
-
+                let gas_limit = (gas_info.gas_wanted as f64).ceil() as u64;
                 let amount = cosmrs::Coin {
                     denom: self.fee_denom.parse().unwrap(),
                     amount: (((gas_limit as f64) * (gas_price.amount.u128() as f64)).ceil() as u64)

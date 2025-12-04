@@ -1,8 +1,15 @@
 package testenv
 
 import (
-	sdkmath "cosmossdk.io/math"
 	"encoding/json"
+	"fmt"
+	"strings"
+	"sync/atomic"
+	"time"
+
+	_ "embed"
+
+	sdkmath "cosmossdk.io/math"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	cmttypes "github.com/cometbft/cometbft/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -10,10 +17,9 @@ import (
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/provenance-io/provenance/cmd/provenanced/config"
+	flatfeestypes "github.com/provenance-io/provenance/x/flatfees/types"
 	nametypes "github.com/provenance-io/provenance/x/name/types"
 	"github.com/spf13/pflag"
-	"strings"
-	"time"
 
 	// helpers
 
@@ -28,6 +34,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+
 	// wasmd
 
 	// provenance
@@ -41,6 +48,18 @@ type TestEnv struct {
 	ValPrivs           []*secp256k1.PrivKey
 	Validator          []byte
 	NodeHome           string
+}
+
+var disableMsgFeesFlag atomic.Bool
+
+// SetMsgFeeLoadingDisabled toggles loading embedded flat fee data during setup.
+func SetMsgFeeLoadingDisabled(disabled bool) {
+	disableMsgFeesFlag.Store(disabled)
+}
+
+// MsgFeeLoadingDisabled reports whether msg fee loading is currently disabled.
+func MsgFeeLoadingDisabled() bool {
+	return disableMsgFeesFlag.Load()
 }
 
 func GenesisStateWithValSet(appInstance *app.App) (app.GenesisState, secp256k1.PrivKey) {
@@ -98,11 +117,10 @@ func SetupProvenanceApp(nodeHome string) *app.App {
 
 	config.SetPioConfigFromFlags(provwasmFlags)
 
-	baseAppOpts := []func(*baseapp.BaseApp){
-		baseapp.SetChainID("testnet"),
-	}
-
 	appOpts := simtestutil.NewAppOptionsWithFlagHome(nodeHome)
+	baseAppOpts := []func(*baseapp.BaseApp){
+		baseapp.SetChainID("testchain"),
+	}
 
 	appInstance := app.New(
 		log.NewNopLogger(),
@@ -145,17 +163,17 @@ func InitChain(appInstance *app.App) (sdk.Context, secp256k1.PrivKey) {
 	// replace sdk.DefaultDenom with "nhash", a bit of a hack, needs improvement
 	stateBytes = []byte(strings.Replace(string(stateBytes), "\"stake\"", "\"nhash\"", -1))
 
-	_, err = appInstance.InitChain(
-		&abci.RequestInitChain{
-			ChainId:         "testnet",
-			Validators:      []abci.ValidatorUpdate{},
-			ConsensusParams: consensusParams,
-			AppStateBytes:   stateBytes,
-		},
-	)
+	_, err = appInstance.InitChain(&abci.RequestInitChain{
+		ChainId:         "testchain",
+		Validators:      []abci.ValidatorUpdate{},
+		ConsensusParams: consensusParams,
+		AppStateBytes:   stateBytes,
+	})
 	requireNoErr(err)
 
-	ctx := appInstance.NewUncachedContext(false, cmtproto.Header{Height: 0, ChainID: "testnet", Time: time.Now().UTC()})
+	ctx := appInstance.NewUncachedContext(false, cmtproto.Header{Height: 0, ChainID: "testchain", Time: time.Now().UTC()})
+
+	requireNoErr(setupFlatFeesModule(ctx, appInstance))
 
 	return ctx, valPriv
 }
@@ -194,4 +212,96 @@ func requireNoErr(err error) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func setupFlatFeesModule(ctx sdk.Context, appInstance *app.App) error {
+	if MsgFeeLoadingDisabled() {
+		// Short-circuit when tests request msg fee loading to be disabled.
+		return appInstance.FlatFeesKeeper.SetParams(ctx, flatfeestypes.DefaultParams())
+	}
+
+	params, msgFees, err := loadFlatFeesConfig()
+	if err != nil {
+		return err
+	}
+
+	if err := appInstance.FlatFeesKeeper.SetParams(ctx, params); err != nil {
+		return err
+	}
+
+	for _, msgFee := range msgFees {
+		if err := appInstance.FlatFeesKeeper.SetMsgFee(ctx, *msgFee); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+//go:embed fees.json
+var flatFeesConfigJSON []byte
+
+type flatFeesDump struct {
+	DefaultCost coinJSON     `json:"default_cost"`
+	MsgFees     []msgFeeJSON `json:"msg_fees"`
+}
+
+type msgFeeJSON struct {
+	MsgTypeURL string     `json:"msg_type_url"`
+	Cost       []coinJSON `json:"cost"`
+}
+
+type coinJSON struct {
+	Denom  string `json:"denom"`
+	Amount string `json:"amount"`
+}
+
+func (c coinJSON) toCoin() (sdk.Coin, error) {
+	if c.Denom == "" {
+		return sdk.Coin{}, fmt.Errorf("coin denom cannot be empty")
+	}
+	amt, ok := sdkmath.NewIntFromString(c.Amount)
+	if !ok {
+		return sdk.Coin{}, fmt.Errorf("invalid coin amount %q", c.Amount)
+	}
+	return sdk.NewCoin(c.Denom, amt), nil
+}
+
+func loadFlatFeesConfig() (flatfeestypes.Params, []*flatfeestypes.MsgFee, error) {
+	var dump flatFeesDump
+	if err := json.Unmarshal(flatFeesConfigJSON, &dump); err != nil {
+		return flatfeestypes.Params{}, nil, fmt.Errorf("failed to decode embedded flat fee config: %w", err)
+	}
+
+	defaultCost, err := dump.DefaultCost.toCoin()
+	if err != nil {
+		return flatfeestypes.Params{}, nil, fmt.Errorf("invalid default cost: %w", err)
+	}
+
+	params := flatfeestypes.Params{
+		DefaultCost: defaultCost,
+		ConversionFactor: flatfeestypes.ConversionFactor{
+			DefinitionAmount: sdk.NewCoin(defaultCost.Denom, defaultCost.Amount),
+			ConvertedAmount:  sdk.NewCoin(defaultCost.Denom, defaultCost.Amount),
+		},
+	}
+
+	if err := params.Validate(); err != nil {
+		return flatfeestypes.Params{}, nil, fmt.Errorf("invalid flat fee params: %w", err)
+	}
+
+	msgFees := make([]*flatfeestypes.MsgFee, 0, len(dump.MsgFees))
+	for _, entry := range dump.MsgFees {
+		coins := make([]sdk.Coin, 0, len(entry.Cost))
+		for _, costCoin := range entry.Cost {
+			coin, err := costCoin.toCoin()
+			if err != nil {
+				return flatfeestypes.Params{}, nil, fmt.Errorf("invalid cost for %s: %w", entry.MsgTypeURL, err)
+			}
+			coins = append(coins, coin)
+		}
+		msgFees = append(msgFees, flatfeestypes.NewMsgFee(entry.MsgTypeURL, coins...))
+	}
+
+	return params, msgFees, nil
 }

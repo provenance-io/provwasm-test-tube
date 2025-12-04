@@ -1,7 +1,7 @@
 use provwasm_std::types::cosmos::authz::v1beta1::{
-    MsgExec, MsgExecResponse, MsgGrant, MsgGrantResponse, QueryGranteeGrantsRequest,
-    QueryGranteeGrantsResponse, QueryGranterGrantsRequest, QueryGranterGrantsResponse,
-    QueryGrantsRequest, QueryGrantsResponse,
+    MsgExec, MsgExecResponse, MsgGrant, MsgGrantResponse, MsgRevoke, MsgRevokeResponse,
+    QueryGranteeGrantsRequest, QueryGranteeGrantsResponse, QueryGranterGrantsRequest,
+    QueryGranterGrantsResponse, QueryGrantsRequest, QueryGrantsResponse,
 };
 use test_tube_prov::{fn_execute, fn_query};
 
@@ -28,6 +28,10 @@ where
 
     fn_execute! {
         pub grant: MsgGrant["/cosmos.authz.v1beta1.MsgGrant"] => MsgGrantResponse
+    }
+
+    fn_execute! {
+        pub revoke: MsgRevoke["/cosmos.authz.v1beta1.MsgRevoke"] => MsgRevokeResponse
     }
 
     fn_query! {

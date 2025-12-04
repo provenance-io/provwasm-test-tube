@@ -11,7 +11,7 @@ pub use cosmrs;
 
 pub use account::{Account, FeeSetting, NonSigningAccount, SigningAccount};
 pub use module::*;
-pub use runner::app::BaseApp;
+pub use runner::app::{BaseApp, BaseAppOptions};
 pub use runner::error::{DecodeError, EncodeError, RunnerError};
 pub use runner::result::{ExecuteResponse, RunnerExecuteResult, RunnerResult};
 pub use runner::Runner;

@@ -1,16 +1,21 @@
 pub use test_tube_prov::macros;
 pub use test_tube_prov::module::Module;
 
+pub mod asset;
 pub mod attribute;
 pub mod authz;
 pub mod bank;
 pub mod exchange;
+pub mod flatfees;
 pub mod gov;
 pub mod hold;
+pub mod ledger;
 pub mod marker;
 pub mod metadata;
 pub mod msgfees;
 pub mod name;
+pub mod nft;
 pub mod oracle;
+pub mod registry;
 pub mod trigger;
 pub mod wasm;

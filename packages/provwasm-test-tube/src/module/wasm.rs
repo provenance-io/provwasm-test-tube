@@ -2,20 +2,28 @@ use cosmwasm_std::Coin;
 use provwasm_std::types::cosmwasm::wasm::v1::{
     AccessConfig, MsgExecuteContract, MsgExecuteContractResponse, MsgInstantiateContract,
     MsgInstantiateContractResponse, MsgMigrateContract, MsgMigrateContractResponse, MsgStoreCode,
-    MsgStoreCodeResponse, QuerySmartContractStateRequest, QuerySmartContractStateResponse,
+    MsgStoreCodeResponse, QueryCodeRequest, QueryCodeResponse, QueryCodesRequest,
+    QueryCodesResponse, QueryContractHistoryRequest, QueryContractHistoryResponse,
+    QueryContractsByCodeRequest, QueryContractsByCodeResponse, QueryContractsByCreatorRequest,
+    QueryContractsByCreatorResponse, QueryParamsRequest, QueryParamsResponse,
+    QueryPinnedCodesRequest, QueryPinnedCodesResponse, QuerySmartContractStateRequest,
+    QuerySmartContractStateResponse,
 };
 use serde::{de::DeserializeOwned, Serialize};
 
+use test_tube_prov::fn_query;
 use test_tube_prov::{
     Account, DecodeError, EncodeError, Runner, RunnerError, RunnerExecuteResult, RunnerResult,
     SigningAccount,
 };
 
+use super::Module;
+
 pub struct Wasm<'a, R: Runner<'a>> {
     runner: &'a R,
 }
 
-impl<'a, R: Runner<'a>> super::Module<'a, R> for Wasm<'a, R> {
+impl<'a, R: Runner<'a>> Module<'a, R> for Wasm<'a, R> {
     fn new(runner: &'a R) -> Self {
         Wasm { runner }
     }
@@ -142,5 +150,33 @@ where
         serde_json::from_slice(&res.data)
             .map_err(DecodeError::JsonDecodeError)
             .map_err(RunnerError::DecodeError)
+    }
+
+    fn_query! {
+        pub query_contract_history ["/cosmwasm.wasm.v1.Query/ContractHistory"]: QueryContractHistoryRequest => QueryContractHistoryResponse
+    }
+
+    fn_query! {
+        pub query_contracts_by_code ["/cosmwasm.wasm.v1.Query/ContractsByCode"]: QueryContractsByCodeRequest => QueryContractsByCodeResponse
+    }
+
+    fn_query! {
+        pub query_code ["/cosmwasm.wasm.v1.Query/Code"]: QueryCodeRequest => QueryCodeResponse
+    }
+
+    fn_query! {
+        pub query_codes ["/cosmwasm.wasm.v1.Query/Codes"]: QueryCodesRequest => QueryCodesResponse
+    }
+
+    fn_query! {
+        pub query_pinned_codes ["/cosmwasm.wasm.v1.Query/PinnedCodes"]: QueryPinnedCodesRequest => QueryPinnedCodesResponse
+    }
+
+    fn_query! {
+        pub query_params ["/cosmwasm.wasm.v1.Query/Params"]: QueryParamsRequest => QueryParamsResponse
+    }
+
+    fn_query! {
+        pub query_contracts_by_creator ["/cosmwasm.wasm.v1.Query/ContractsByCreator"]: QueryContractsByCreatorRequest => QueryContractsByCreatorResponse
     }
 }

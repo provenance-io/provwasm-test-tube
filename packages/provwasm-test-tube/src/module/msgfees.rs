@@ -4,9 +4,8 @@ use provwasm_std::types::provenance::msgfees::v1::{
     MsgUpdateConversionFeeDenomProposalRequest, MsgUpdateConversionFeeDenomProposalResponse,
     MsgUpdateMsgFeeProposalRequest, MsgUpdateMsgFeeProposalResponse,
     MsgUpdateNhashPerUsdMilProposalRequest, MsgUpdateNhashPerUsdMilProposalResponse,
-    QueryAllMsgFeesRequest, QueryAllMsgFeesResponse, QueryParamsRequest, QueryParamsResponse,
 };
-use test_tube_prov::{fn_execute, fn_query, Module, Runner};
+use test_tube_prov::{fn_execute, Module, Runner};
 
 pub struct MsgFees<'a, R: Runner<'a>> {
     runner: &'a R,
@@ -44,13 +43,5 @@ where
 
     fn_execute! {
         pub update_conversion_fee_denom_proposal: MsgUpdateConversionFeeDenomProposalRequest["/provenance.msgfees.v1.MsgUpdateConversionFeeDenomProposalRequest"] => MsgUpdateConversionFeeDenomProposalResponse
-    }
-
-    fn_query! {
-        pub query_params ["/provenance.msgfees.v1.Query/Params"]: QueryParamsRequest => QueryParamsResponse
-    }
-
-    fn_query! {
-        pub query_all_msg_fees ["/provenance.msgfees.v1.Query/QueryAllMsgFees"]: QueryAllMsgFeesRequest => QueryAllMsgFeesResponse
     }
 }
