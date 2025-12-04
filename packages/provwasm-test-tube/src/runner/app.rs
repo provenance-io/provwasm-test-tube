@@ -1,5 +1,6 @@
 use cosmwasm_std::Coin;
 use test_tube_prov::account::SigningAccount;
+use test_tube_prov::runner::app::BaseAppOptions;
 use test_tube_prov::runner::result::{RunnerExecuteResult, RunnerResult};
 use test_tube_prov::runner::Runner;
 use test_tube_prov::BaseApp;
@@ -7,6 +8,30 @@ use test_tube_prov::BaseApp;
 const FEE_DENOM: &str = "nhash";
 const PROV_ADDRESS_PREFIX: &str = "tp";
 const CHAIN_ID: &str = "testchain";
+
+/// Options exposed to tailor `ProvwasmTestApp` initialization.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ProvwasmTestAppOptions {
+    /// Denomination used for app-level fees.
+    pub fee_denom: String,
+    /// Chain identifier propagated to the underlying Provenance application.
+    pub chain_id: String,
+    /// Bech32 address prefix applied to generated accounts.
+    pub address_prefix: String,
+    /// When false, the embedded message fee configuration will be skipped.
+    pub load_msg_fees: bool,
+}
+
+impl Default for ProvwasmTestAppOptions {
+    fn default() -> Self {
+        Self {
+            fee_denom: FEE_DENOM.to_string(),
+            chain_id: CHAIN_ID.to_string(),
+            address_prefix: PROV_ADDRESS_PREFIX.to_string(),
+            load_msg_fees: true,
+        }
+    }
+}
 
 #[derive(Debug, PartialEq)]
 pub struct ProvwasmTestApp {
@@ -21,8 +46,27 @@ impl Default for ProvwasmTestApp {
 
 impl ProvwasmTestApp {
     pub fn new() -> Self {
+        Self::new_with_options(ProvwasmTestAppOptions::default())
+    }
+
+    /// Construct a new app instance using the provided configuration options.
+    pub fn new_with_options(options: ProvwasmTestAppOptions) -> Self {
+        let ProvwasmTestAppOptions {
+            fee_denom,
+            chain_id,
+            address_prefix,
+            load_msg_fees,
+        } = options;
+
+        let base_options = BaseAppOptions {
+            fee_denom,
+            chain_id,
+            address_prefix,
+            load_msg_fees,
+        };
+
         Self {
-            inner: BaseApp::new(FEE_DENOM, CHAIN_ID, PROV_ADDRESS_PREFIX),
+            inner: BaseApp::new_with_options(base_options),
         }
     }
 
@@ -125,9 +169,11 @@ impl<'a> Runner<'a> for ProvwasmTestApp {
 mod tests {
     use cosmwasm_std::{coins, Coin};
     use provwasm_std::types::cosmos::bank::v1beta1::QueryAllBalancesRequest;
+    use provwasm_std::types::provenance::flatfees::v1::QueryAllMsgFeesRequest;
 
     use crate::bank::Bank;
-    use crate::runner::app::ProvwasmTestApp;
+    use crate::module::flatfees::Flatfees;
+    use crate::runner::app::{ProvwasmTestApp, ProvwasmTestAppOptions};
     use crate::wasm::Wasm;
 
     use test_tube_prov::account::{Account, FeeSetting};
@@ -285,5 +331,26 @@ mod tests {
         assert!(res.gas_info.gas_wanted <= gas_limit);
         // Verify that the custom fee amount was correctly deducted
         assert_eq!(bob_balance, initial_balance - amount.amount.u128());
+    }
+
+    #[test]
+    fn test_disable_msg_fees_via_options() {
+        let app = ProvwasmTestApp::new_with_options(ProvwasmTestAppOptions {
+            load_msg_fees: false,
+            ..Default::default()
+        });
+        let flatfees = Flatfees::new(&app);
+        let response = flatfees
+            .query_all_msg_fees(&QueryAllMsgFeesRequest {
+                pagination: None,
+                do_not_convert: false,
+            })
+            .unwrap();
+
+        assert!(
+            response.msg_fees.is_empty(),
+            "expected no msg fees when loading is disabled, found {} entries",
+            response.msg_fees.len()
+        );
     }
 }

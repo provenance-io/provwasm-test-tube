@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	_ "embed"
@@ -47,6 +48,18 @@ type TestEnv struct {
 	ValPrivs           []*secp256k1.PrivKey
 	Validator          []byte
 	NodeHome           string
+}
+
+var disableMsgFeesFlag atomic.Bool
+
+// SetMsgFeeLoadingDisabled toggles loading embedded flat fee data during setup.
+func SetMsgFeeLoadingDisabled(disabled bool) {
+	disableMsgFeesFlag.Store(disabled)
+}
+
+// MsgFeeLoadingDisabled reports whether msg fee loading is currently disabled.
+func MsgFeeLoadingDisabled() bool {
+	return disableMsgFeesFlag.Load()
 }
 
 func GenesisStateWithValSet(appInstance *app.App) (app.GenesisState, secp256k1.PrivKey) {
@@ -202,6 +215,11 @@ func requireNoErr(err error) {
 }
 
 func setupFlatFeesModule(ctx sdk.Context, appInstance *app.App) error {
+	if MsgFeeLoadingDisabled() {
+		// Short-circuit when tests request msg fee loading to be disabled.
+		return appInstance.FlatFeesKeeper.SetParams(ctx, flatfeestypes.DefaultParams())
+	}
+
 	params, msgFees, err := loadFlatFeesConfig()
 	if err != nil {
 		return err

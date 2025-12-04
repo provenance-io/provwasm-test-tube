@@ -212,6 +212,12 @@ extern "C" {
     pub fn InitTestEnv() -> GoUint64;
 }
 extern "C" {
+    pub fn SetFlatFeeLoadingDisabled(disable: GoInt32);
+}
+extern "C" {
+    pub fn GetFlatFeeLoadingDisabled() -> GoInt32;
+}
+extern "C" {
     pub fn InitAccount(envId: GoUint64, coinsJson: GoString) -> *mut ::std::os::raw::c_char;
 }
 extern "C" {

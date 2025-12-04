@@ -17,8 +17,10 @@ contract against real chain's logic instead of mocks.
 
 | provwasm-test-tube | provwasm | provenance |
 |--------------------|----------|------------|
-| 0.2.0              | 2.4.0    | 1.19.1     |
-| 0.1.0              | 2.2.0    | 1.18.0     |
+| 0.4.0              | 2.7.x    | 1.26.0+    |
+| 0.3.0              | 2.5.x    | 1.20.0+    |
+| 0.2.0              | 2.4.x    | 1.19.1+    |
+| 0.1.0              | 2.2.x    | 1.18.0+    |
 
 ## Getting Started
 
@@ -190,6 +192,26 @@ fn create_and_withdraw() -> Result<(), RunnerError> {
     Ok(())
 }
 ```
+
+### Customizing Chain Parameters
+
+`ProvwasmTestAppOptions` lets you override the most common network settings when spinning up
+the in-memory chain. You can change the fee denomination, chain ID, address prefix, and whether
+the `flatfees` message fee schedule should load:
+
+```rust
+use provwasm_test_tube::{ProvwasmTestApp, ProvwasmTestAppOptions};
+
+let app = ProvwasmTestApp::new_with_options(ProvwasmTestAppOptions {
+    fee_denom: "customhash".into(),
+    chain_id: "custom-chain".into(),
+    address_prefix: "custom".into(),
+    load_msg_fees: false,
+});
+```
+
+In this example the app mirrors a custom network while skipping any pre-packaged message fees,
+leaving the `flatfees` module empty so you can register fees as part of your test setup.
 
 ## Debugging
 
