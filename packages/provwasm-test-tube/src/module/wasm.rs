@@ -11,11 +11,11 @@ use provwasm_std::types::cosmwasm::wasm::v1::{
 };
 use serde::{de::DeserializeOwned, Serialize};
 
+use test_tube_prov::fn_query;
 use test_tube_prov::{
     Account, DecodeError, EncodeError, Runner, RunnerError, RunnerExecuteResult, RunnerResult,
     SigningAccount,
 };
-use test_tube_prov::fn_query;
 
 use super::Module;
 

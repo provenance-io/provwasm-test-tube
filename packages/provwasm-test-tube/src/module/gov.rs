@@ -1,22 +1,25 @@
 use test_tube_prov::{fn_execute, fn_query, Module, Runner};
 
+use provwasm_std::types::cosmos::gov::v1::{
+    QueryConstitutionRequest, QueryConstitutionResponse,
+    QueryDepositRequest as QueryDepositRequestV1, QueryDepositResponse as QueryDepositResponseV1,
+    QueryDepositsRequest as QueryDepositsRequestV1,
+    QueryDepositsResponse as QueryDepositsResponseV1, QueryParamsRequest as QueryParamsRequestV1,
+    QueryParamsResponse as QueryParamsResponseV1, QueryProposalRequest as QueryProposalRequestV1,
+    QueryProposalResponse as QueryProposalResponseV1,
+    QueryProposalsRequest as QueryProposalsRequestV1,
+    QueryProposalsResponse as QueryProposalsResponseV1,
+    QueryTallyResultRequest as QueryTallyResultRequestV1,
+    QueryTallyResultResponse as QueryTallyResultResponseV1, QueryVoteRequest as QueryVoteRequestV1,
+    QueryVoteResponse as QueryVoteResponseV1, QueryVotesRequest as QueryVotesRequestV1,
+    QueryVotesResponse as QueryVotesResponseV1,
+};
 use provwasm_std::types::cosmos::gov::v1beta1::{
     MsgSubmitProposal, MsgSubmitProposalResponse, MsgVote, MsgVoteResponse, QueryDepositRequest,
     QueryDepositResponse, QueryDepositsRequest, QueryDepositsResponse, QueryParamsRequest,
     QueryParamsResponse, QueryProposalRequest, QueryProposalResponse, QueryProposalsRequest,
     QueryProposalsResponse, QueryTallyResultRequest, QueryTallyResultResponse, QueryVoteRequest,
     QueryVoteResponse, QueryVotesRequest, QueryVotesResponse,
-};
-use provwasm_std::types::cosmos::gov::v1::{
-    QueryConstitutionRequest, QueryConstitutionResponse, QueryDepositRequest as QueryDepositRequestV1,
-    QueryDepositResponse as QueryDepositResponseV1, QueryDepositsRequest as QueryDepositsRequestV1,
-    QueryDepositsResponse as QueryDepositsResponseV1, QueryParamsRequest as QueryParamsRequestV1,
-    QueryParamsResponse as QueryParamsResponseV1, QueryProposalRequest as QueryProposalRequestV1,
-    QueryProposalResponse as QueryProposalResponseV1, QueryProposalsRequest as QueryProposalsRequestV1,
-    QueryProposalsResponse as QueryProposalsResponseV1, QueryTallyResultRequest as QueryTallyResultRequestV1,
-    QueryTallyResultResponse as QueryTallyResultResponseV1, QueryVoteRequest as QueryVoteRequestV1,
-    QueryVoteResponse as QueryVoteResponseV1, QueryVotesRequest as QueryVotesRequestV1,
-    QueryVotesResponse as QueryVotesResponseV1,
 };
 
 pub struct Gov<'a, R: Runner<'a>> {

@@ -1,8 +1,8 @@
 use provwasm_std::types::cosmos::nft::v1beta1::{
     MsgSend, MsgSendResponse, QueryBalanceRequest, QueryBalanceResponse, QueryClassRequest,
-    QueryClassResponse, QueryClassesRequest, QueryClassesResponse, QueryNftRequest, QueryNftResponse,
-    QueryNftsRequest, QueryNftsResponse, QueryOwnerRequest, QueryOwnerResponse, QuerySupplyRequest,
-    QuerySupplyResponse,
+    QueryClassResponse, QueryClassesRequest, QueryClassesResponse, QueryNftRequest,
+    QueryNftResponse, QueryNftsRequest, QueryNftsResponse, QueryOwnerRequest, QueryOwnerResponse,
+    QuerySupplyRequest, QuerySupplyResponse,
 };
 use test_tube_prov::{fn_execute, fn_query, Module, Runner};
 
@@ -52,4 +52,3 @@ where
         pub query_supply ["/cosmos.nft.v1beta1.Query/Supply"]: QuerySupplyRequest => QuerySupplyResponse
     }
 }
-

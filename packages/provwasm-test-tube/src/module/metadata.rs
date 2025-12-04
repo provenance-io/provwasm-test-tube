@@ -29,8 +29,8 @@ use provwasm_std::types::provenance::metadata::v1::{
     RecordSpecificationsForContractSpecificationResponse, RecordsAllRequest, RecordsAllResponse,
     RecordsRequest, RecordsResponse, ScopeRequest, ScopeResponse, ScopeSpecificationRequest,
     ScopeSpecificationResponse, ScopeSpecificationsAllRequest, ScopeSpecificationsAllResponse,
-    ScopesAllRequest, ScopesAllResponse, SessionsAllRequest, SessionsAllResponse,
-    SessionsRequest, SessionsResponse, ValueOwnershipRequest, ValueOwnershipResponse,
+    ScopesAllRequest, ScopesAllResponse, SessionsAllRequest, SessionsAllResponse, SessionsRequest,
+    SessionsResponse, ValueOwnershipRequest, ValueOwnershipResponse,
 };
 use test_tube_prov::{fn_execute, fn_query, Module, Runner};
 

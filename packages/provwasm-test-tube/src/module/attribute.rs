@@ -1,5 +1,12 @@
 use provwasm_std::types::provenance::attribute::v1::{
-    MsgAddAttributeRequest, MsgAddAttributeResponse, MsgDeleteAttributeRequest, MsgDeleteAttributeResponse, MsgDeleteDistinctAttributeRequest, MsgSetAccountDataRequest, MsgSetAccountDataResponse, MsgUpdateAttributeExpirationRequest, MsgUpdateAttributeExpirationResponse, MsgUpdateAttributeRequest, MsgUpdateAttributeResponse, QueryAccountDataRequest, QueryAccountDataResponse, QueryAttributeAccountsRequest, QueryAttributeAccountsResponse, QueryAttributeRequest, QueryAttributeResponse, QueryAttributesRequest, QueryAttributesResponse, QueryParamsRequest, QueryParamsResponse, QueryScanRequest, QueryScanResponse
+    MsgAddAttributeRequest, MsgAddAttributeResponse, MsgDeleteAttributeRequest,
+    MsgDeleteAttributeResponse, MsgDeleteDistinctAttributeRequest, MsgSetAccountDataRequest,
+    MsgSetAccountDataResponse, MsgUpdateAttributeExpirationRequest,
+    MsgUpdateAttributeExpirationResponse, MsgUpdateAttributeRequest, MsgUpdateAttributeResponse,
+    QueryAccountDataRequest, QueryAccountDataResponse, QueryAttributeAccountsRequest,
+    QueryAttributeAccountsResponse, QueryAttributeRequest, QueryAttributeResponse,
+    QueryAttributesRequest, QueryAttributesResponse, QueryParamsRequest, QueryParamsResponse,
+    QueryScanRequest, QueryScanResponse,
 };
 
 use test_tube_prov::module::Module;

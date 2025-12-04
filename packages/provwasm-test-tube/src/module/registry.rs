@@ -1,8 +1,8 @@
 use provwasm_std::types::provenance::registry::v1::{
-    MsgGrantRole, MsgGrantRoleResponse, MsgRegisterNft, MsgRegisterNftResponse, MsgRegistryBulkUpdate,
-    MsgRegistryBulkUpdateResponse, MsgRevokeRole, MsgRevokeRoleResponse, MsgUnregisterNft,
-    MsgUnregisterNftResponse, QueryGetRegistryRequest, QueryGetRegistryResponse, QueryHasRoleRequest,
-    QueryHasRoleResponse,
+    MsgGrantRole, MsgGrantRoleResponse, MsgRegisterNft, MsgRegisterNftResponse,
+    MsgRegistryBulkUpdate, MsgRegistryBulkUpdateResponse, MsgRevokeRole, MsgRevokeRoleResponse,
+    MsgUnregisterNft, MsgUnregisterNftResponse, QueryGetRegistryRequest, QueryGetRegistryResponse,
+    QueryHasRoleRequest, QueryHasRoleResponse,
 };
 use test_tube_prov::{fn_execute, fn_query, Module, Runner};
 
@@ -48,4 +48,3 @@ where
         pub query_has_role ["/provenance.registry.v1.Query/HasRole"]: QueryHasRoleRequest => QueryHasRoleResponse
     }
 }
-

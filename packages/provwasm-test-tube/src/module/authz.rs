@@ -1,5 +1,7 @@
 use provwasm_std::types::cosmos::authz::v1beta1::{
-    MsgExec, MsgExecResponse, MsgGrant, MsgGrantResponse, MsgRevoke, MsgRevokeResponse, QueryGranteeGrantsRequest, QueryGranteeGrantsResponse, QueryGranterGrantsRequest, QueryGranterGrantsResponse, QueryGrantsRequest, QueryGrantsResponse
+    MsgExec, MsgExecResponse, MsgGrant, MsgGrantResponse, MsgRevoke, MsgRevokeResponse,
+    QueryGranteeGrantsRequest, QueryGranteeGrantsResponse, QueryGranterGrantsRequest,
+    QueryGranterGrantsResponse, QueryGrantsRequest, QueryGrantsResponse,
 };
 use test_tube_prov::{fn_execute, fn_query};
 
