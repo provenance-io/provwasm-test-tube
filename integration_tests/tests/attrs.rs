@@ -2,13 +2,18 @@ use std::env;
 
 use cosmwasm_std::coin;
 use provwasm_test_tube::wasm::Wasm;
-use provwasm_test_tube::{Account, Module, ProvwasmTestApp, RunnerError};
+use provwasm_test_tube::{Account, Module, ProvwasmTestApp, ProvwasmTestAppOptions, RunnerError};
 
 use attrs::msg::{ExecuteMsg, InitMsg, Label, LabelNameResponse, LabelsResponse, QueryMsg};
 
 #[test]
 fn create_update_delete_attr() -> Result<(), RunnerError> {
-    let app = ProvwasmTestApp::default();
+    let app = ProvwasmTestApp::new_with_options(ProvwasmTestAppOptions {
+        chain_id: "testchain".to_string(),
+        address_prefix: "tp".to_string(),
+        fee_denom: "nhash".to_string(),
+        load_msg_fees: false,
+    });
     let accs = app.init_accounts(&[coin(100_000_000_000_000, "nhash")], 1)?;
     let admin = &accs[0];
 

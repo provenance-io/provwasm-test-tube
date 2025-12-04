@@ -1,19 +1,22 @@
 use cosmwasm_std::coin;
 use name::msg::{ExecuteMsg, InitMsg, LookupResponse, QueryMsg};
 use provwasm_test_tube::wasm::Wasm;
-use provwasm_test_tube::{Account, Module, ProvwasmTestApp, RunnerError};
+use provwasm_test_tube::{Account, Module, ProvwasmTestApp, ProvwasmTestAppOptions, RunnerError};
 
 #[test]
 fn bind_unbind_prefix() -> Result<(), RunnerError> {
-    let app = ProvwasmTestApp::default();
+    let app = ProvwasmTestApp::new_with_options(ProvwasmTestAppOptions {
+        chain_id: "testchain".to_string(),
+        address_prefix: "tp".to_string(),
+        fee_denom: "nhash".to_string(),
+        load_msg_fees: false,
+    });
     let accs = app.init_accounts(&[coin(100_000_000_000_000, "nhash")], 1)?;
     let admin = &accs[0];
 
     let wasm = Wasm::new(&app);
-    let wasm_byte_code = std::fs::read(
-        format!("{}/wasm/name.wasm", env!("CARGO_MANIFEST_DIR")),
-    )
-    .unwrap();
+    let wasm_byte_code =
+        std::fs::read(format!("{}/wasm/name.wasm", env!("CARGO_MANIFEST_DIR"))).unwrap();
     let store_res = wasm.store_code(&wasm_byte_code, None, admin);
     let code_id = store_res?.data.code_id;
     assert_eq!(code_id, 1);
