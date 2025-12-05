@@ -1,4 +1,8 @@
+use std::io::Write;
+
 use cosmwasm_std::Coin;
+use flate2::write::GzEncoder;
+use flate2::Compression;
 use provwasm_std::types::cosmwasm::wasm::v1::{
     AccessConfig, MsgExecuteContract, MsgExecuteContractResponse, MsgInstantiateContract,
     MsgInstantiateContractResponse, MsgMigrateContract, MsgMigrateContractResponse, MsgStoreCode,
@@ -19,6 +23,23 @@ use test_tube_prov::{
 
 use super::Module;
 
+/// Gzip magic number bytes used to detect if data is already gzip-compressed.
+const GZIP_MAGIC: [u8; 2] = [0x1f, 0x8b];
+
+/// Checks if the given bytes are gzip-compressed by looking for the gzip magic number.
+fn is_gzip(data: &[u8]) -> bool {
+    data.len() >= 2 && data[0] == GZIP_MAGIC[0] && data[1] == GZIP_MAGIC[1]
+}
+
+/// Compresses the given bytes using gzip compression.
+/// This matches the behavior of the provenanced CLI which automatically gzips wasm
+/// files before submitting them in transactions, reducing transaction size and gas costs.
+fn gzip_bytes(data: &[u8]) -> std::io::Result<Vec<u8>> {
+    let mut encoder = GzEncoder::new(Vec::new(), Compression::default());
+    encoder.write_all(data)?;
+    encoder.finish()
+}
+
 pub struct Wasm<'a, R: Runner<'a>> {
     runner: &'a R,
 }
@@ -33,16 +54,29 @@ impl<'a, R> Wasm<'a, R>
 where
     R: Runner<'a>,
 {
+    /// Stores wasm code on chain. The wasm bytes are automatically gzip-compressed
+    /// if not already compressed, matching the behavior of the provenanced CLI.
+    /// This significantly reduces transaction size and gas costs.
     pub fn store_code(
         &self,
         wasm_byte_code: &[u8],
         instantiate_permission: Option<AccessConfig>,
         signer: &SigningAccount,
     ) -> RunnerExecuteResult<MsgStoreCodeResponse> {
+        // Gzip the wasm if not already compressed, matching CLI behavior.
+        // This reduces transaction size and associated gas costs significantly.
+        let compressed_code = if is_gzip(wasm_byte_code) {
+            wasm_byte_code.to_vec()
+        } else {
+            gzip_bytes(wasm_byte_code).map_err(|e| {
+                RunnerError::EncodeError(EncodeError::JsonEncodeError(serde_json::Error::io(e)))
+            })?
+        };
+
         self.runner.execute(
             MsgStoreCode {
                 sender: signer.address(),
-                wasm_byte_code: wasm_byte_code.to_vec(),
+                wasm_byte_code: compressed_code,
                 instantiate_permission,
             },
             "/cosmwasm.wasm.v1.MsgStoreCode",
