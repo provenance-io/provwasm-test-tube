@@ -12,23 +12,14 @@ const CHAIN_ID: &str = "testchain";
 /// Options exposed to tailor `ProvwasmTestApp` initialization.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ProvwasmTestAppOptions {
-    /// Denomination used for app-level fees.
-    pub fee_denom: String,
-    /// Chain identifier propagated to the underlying Provenance application.
-    pub chain_id: String,
-    /// Bech32 address prefix applied to generated accounts.
-    pub address_prefix: String,
-    /// When false, the embedded message fee configuration will be skipped.
+    /// When true, load the embedded Provenance message fee schedule during setup.
     pub load_msg_fees: bool,
 }
 
 impl Default for ProvwasmTestAppOptions {
     fn default() -> Self {
         Self {
-            fee_denom: FEE_DENOM.to_string(),
-            chain_id: CHAIN_ID.to_string(),
-            address_prefix: PROV_ADDRESS_PREFIX.to_string(),
-            load_msg_fees: true,
+            load_msg_fees: false,
         }
     }
 }
@@ -51,22 +42,17 @@ impl ProvwasmTestApp {
 
     /// Construct a new app instance using the provided configuration options.
     pub fn new_with_options(options: ProvwasmTestAppOptions) -> Self {
-        let ProvwasmTestAppOptions {
-            fee_denom,
-            chain_id,
-            address_prefix,
-            load_msg_fees,
-        } = options;
+        let ProvwasmTestAppOptions { load_msg_fees } = options;
 
-        let base_options = BaseAppOptions {
-            fee_denom,
-            chain_id,
-            address_prefix,
-            load_msg_fees,
-        };
+        let base_options = BaseAppOptions { load_msg_fees };
 
         Self {
-            inner: BaseApp::new_with_options(base_options),
+            inner: BaseApp::new_with_options(
+                FEE_DENOM,
+                CHAIN_ID,
+                PROV_ADDRESS_PREFIX,
+                base_options,
+            ),
         }
     }
 
@@ -334,13 +320,10 @@ mod tests {
     }
 
     #[test]
-    fn test_disable_msg_fees_via_options() {
-        let app = ProvwasmTestApp::new_with_options(ProvwasmTestAppOptions {
-            load_msg_fees: false,
-            ..Default::default()
-        });
-        let flatfees = Flatfees::new(&app);
-        let response = flatfees
+    fn test_msg_fee_loading_toggle() {
+        let disabled_app = ProvwasmTestApp::default();
+        let disabled_flatfees = Flatfees::new(&disabled_app);
+        let disabled_response = disabled_flatfees
             .query_all_msg_fees(&QueryAllMsgFeesRequest {
                 pagination: None,
                 do_not_convert: false,
@@ -348,9 +331,24 @@ mod tests {
             .unwrap();
 
         assert!(
-            response.msg_fees.is_empty(),
-            "expected no msg fees when loading is disabled, found {} entries",
-            response.msg_fees.len()
+            disabled_response.msg_fees.is_empty(),
+            "message fees should be disabled by default"
+        );
+
+        let enabled_app = ProvwasmTestApp::new_with_options(ProvwasmTestAppOptions {
+            load_msg_fees: true,
+        });
+        let enabled_flatfees = Flatfees::new(&enabled_app);
+        let enabled_response = enabled_flatfees
+            .query_all_msg_fees(&QueryAllMsgFeesRequest {
+                pagination: None,
+                do_not_convert: false,
+            })
+            .unwrap();
+
+        assert!(
+            !enabled_response.msg_fees.is_empty(),
+            "expected message fees when loading is enabled"
         );
     }
 }

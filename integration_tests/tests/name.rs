@@ -1,16 +1,11 @@
 use cosmwasm_std::coin;
 use name::msg::{ExecuteMsg, InitMsg, LookupResponse, QueryMsg};
 use provwasm_test_tube::wasm::Wasm;
-use provwasm_test_tube::{Account, Module, ProvwasmTestApp, ProvwasmTestAppOptions, RunnerError};
+use provwasm_test_tube::{Account, Module, ProvwasmTestApp, RunnerError};
 
 #[test]
 fn bind_unbind_prefix() -> Result<(), RunnerError> {
-    let app = ProvwasmTestApp::new_with_options(ProvwasmTestAppOptions {
-        chain_id: "testchain".to_string(),
-        address_prefix: "tp".to_string(),
-        fee_denom: "nhash".to_string(),
-        load_msg_fees: false,
-    });
+    let app = ProvwasmTestApp::new();
     let accs = app.init_accounts(&[coin(100_000_000_000_000, "nhash")], 1)?;
     let admin = &accs[0];
 

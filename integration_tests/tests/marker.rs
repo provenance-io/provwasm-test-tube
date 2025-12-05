@@ -1,6 +1,6 @@
 use cosmwasm_std::{coin, Coin, Uint128};
 use provwasm_test_tube::wasm::Wasm;
-use provwasm_test_tube::{Account, Module, ProvwasmTestApp, ProvwasmTestAppOptions, RunnerError};
+use provwasm_test_tube::{Account, Module, ProvwasmTestApp, RunnerError};
 
 use marker::msg::{ExecuteMsg, InitMsg, QueryMsg};
 use marker::types::Marker;
@@ -11,12 +11,7 @@ use provwasm_test_tube::provwasm_std::types::provenance::marker::v1::{
 
 #[test]
 fn create_and_withdraw() -> Result<(), RunnerError> {
-    let app = ProvwasmTestApp::new_with_options(ProvwasmTestAppOptions {
-        chain_id: "testchain".to_string(),
-        address_prefix: "tp".to_string(),
-        fee_denom: "nhash".to_string(),
-        load_msg_fees: false,
-    });
+    let app = ProvwasmTestApp::new();
     let accs = app.init_accounts(&[coin(100_000_000_000_000, "nhash")], 1)?;
     let admin = &accs[0];
 
@@ -104,12 +99,7 @@ fn create_and_withdraw() -> Result<(), RunnerError> {
 
 #[test]
 fn custom_module() -> Result<(), RunnerError> {
-    let app = ProvwasmTestApp::new_with_options(ProvwasmTestAppOptions {
-        chain_id: "testchain".to_string(),
-        address_prefix: "tp".to_string(),
-        fee_denom: "nhash".to_string(),
-        load_msg_fees: false,
-    });
+    let app = ProvwasmTestApp::new();
     let accs = app.init_accounts(&[coin(100_000_000_000_000, "nhash")], 1)?;
     let admin = &accs[0];
 
