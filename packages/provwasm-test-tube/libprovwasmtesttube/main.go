@@ -40,6 +40,7 @@ var (
 
 // SetFlatFeeLoadingDisabled toggles loading of the embedded flat fee data set so that
 // callers can simulate chains without any preconfigured message fees.
+//
 //export SetFlatFeeLoadingDisabled
 func SetFlatFeeLoadingDisabled(disable C.int) {
 	testenv.SetMsgFeeLoadingDisabled(disable != 0)
@@ -47,6 +48,7 @@ func SetFlatFeeLoadingDisabled(disable C.int) {
 
 // GetFlatFeeLoadingDisabled reports whether the flat fee loader has been disabled in
 // the current process, which allows callers to restore any previous configuration.
+//
 //export GetFlatFeeLoadingDisabled
 func GetFlatFeeLoadingDisabled() C.int {
 	if testenv.MsgFeeLoadingDisabled() {

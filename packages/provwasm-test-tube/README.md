@@ -193,25 +193,21 @@ fn create_and_withdraw() -> Result<(), RunnerError> {
 }
 ```
 
-### Customizing Chain Parameters
+### Message Fee Loading
 
-`ProvwasmTestAppOptions` lets you override the most common network settings when spinning up
-the in-memory chain. You can change the fee denomination, chain ID, address prefix, and whether
-the `flatfees` message fee schedule should load:
+`ProvwasmTestAppOptions` keeps message fees disabled by default so your tests start with an empty
+`flatfees` configuration. Enable the embedded schedule when you need the Provenance defaults:
 
 ```rust
 use provwasm_test_tube::{ProvwasmTestApp, ProvwasmTestAppOptions};
 
 let app = ProvwasmTestApp::new_with_options(ProvwasmTestAppOptions {
-    fee_denom: "customhash".into(),
-    chain_id: "custom-chain".into(),
-    address_prefix: "custom".into(),
-    load_msg_fees: false,
+    load_msg_fees: true,
 });
 ```
 
-In this example the app mirrors a custom network while skipping any pre-packaged message fees,
-leaving the `flatfees` module empty so you can register fees as part of your test setup.
+This keeps fee setup explicit: opt in to the packaged fees when needed, or register bespoke fees as
+part of your test initialization.
 
 ## Debugging
 

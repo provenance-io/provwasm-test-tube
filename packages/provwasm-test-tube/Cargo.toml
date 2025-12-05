@@ -15,6 +15,7 @@ exclude = ["provenance", "test_artifacts"]
 [dependencies]
 cosmrs = { workspace = true }
 cosmwasm-std = { workspace = true }
+flate2 = { workspace = true }
 provwasm-std = { workspace = true }
 prost = { workspace = true }
 serde = { workspace = true }

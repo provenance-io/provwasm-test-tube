@@ -1,7 +1,7 @@
 use cosmwasm_std::{coin, Uint64};
 use provwasm_test_tube::trigger::Trigger as Trigger_Runner;
 use provwasm_test_tube::wasm::Wasm;
-use provwasm_test_tube::{Account, Module, ProvwasmTestApp, ProvwasmTestAppOptions, RunnerError};
+use provwasm_test_tube::{Account, Module, ProvwasmTestApp, RunnerError};
 
 use provwasm_std::types::provenance::trigger::v1::QueryTriggersRequest;
 use trigger::msg::Event::{BlockHeightEvent, BlockTimeEvent};
@@ -9,12 +9,7 @@ use trigger::msg::{ExecuteMsg, InitMsg};
 
 #[test]
 fn create_triggers() -> Result<(), RunnerError> {
-    let app = ProvwasmTestApp::new_with_options(ProvwasmTestAppOptions {
-        chain_id: "testchain".to_string(),
-        address_prefix: "tp".to_string(),
-        fee_denom: "nhash".to_string(),
-        load_msg_fees: false,
-    });
+    let app = ProvwasmTestApp::new();
     let accs = app.init_accounts(&[coin(100_000_000_000_000, "nhash")], 3)?;
     let admin = &accs[0];
     let sender = &accs[1];

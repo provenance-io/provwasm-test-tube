@@ -29,40 +29,14 @@ static ENVIRONMENT_GUARD: OnceLock<Mutex<()>> = OnceLock::new();
 /// Configuration flags that control BaseApp initialization.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BaseAppOptions {
-    /// Denomination used for fees and balances.
-    pub fee_denom: String,
-    /// Chain identifier passed through to the Provenance app.
-    pub chain_id: String,
-    /// Bech32 address prefix used when creating new accounts.
-    pub address_prefix: String,
-    /// Load the embedded Provenance message fees when spinning up the app.
+    /// When true, the embedded Provenance message fee schedule loads during setup.
     pub load_msg_fees: bool,
 }
 
 impl Default for BaseAppOptions {
     fn default() -> Self {
         Self {
-            fee_denom: "nhash".to_string(),
-            chain_id: "testchain".to_string(),
-            address_prefix: "tp".to_string(),
-            load_msg_fees: true,
-        }
-    }
-}
-
-impl BaseAppOptions {
-    /// Create a new BaseAppOptions while overriding the chain identifiers commonly
-    /// configured by Provenance-based tests.
-    pub fn new(
-        fee_denom: impl Into<String>,
-        chain_id: impl Into<String>,
-        address_prefix: impl Into<String>,
-    ) -> Self {
-        Self {
-            fee_denom: fee_denom.into(),
-            chain_id: chain_id.into(),
-            address_prefix: address_prefix.into(),
-            load_msg_fees: true,
+            load_msg_fees: false,
         }
     }
 }
@@ -78,22 +52,27 @@ pub struct BaseApp {
 
 impl BaseApp {
     pub fn new(fee_denom: &str, chain_id: &str, address_prefix: &str) -> Self {
-        Self::new_with_options(BaseAppOptions::new(fee_denom, chain_id, address_prefix))
+        Self::new_with_options(
+            fee_denom,
+            chain_id,
+            address_prefix,
+            BaseAppOptions::default(),
+        )
     }
 
     /// Construct a new BaseApp while applying the given configuration options.
-    pub fn new_with_options(options: BaseAppOptions) -> Self {
+    pub fn new_with_options(
+        fee_denom: &str,
+        chain_id: &str,
+        address_prefix: &str,
+        options: BaseAppOptions,
+    ) -> Self {
         let _env_guard = ENVIRONMENT_GUARD
             .get_or_init(|| Mutex::new(()))
             .lock()
             .unwrap();
 
-        let BaseAppOptions {
-            fee_denom,
-            chain_id,
-            address_prefix,
-            load_msg_fees,
-        } = options;
+        let BaseAppOptions { load_msg_fees } = options;
 
         // Capture the previous toggle so we can reinstate it once initialization finishes.
         let previous = unsafe { GetFlatFeeLoadingDisabled() != 0 };
@@ -110,9 +89,9 @@ impl BaseApp {
 
         BaseApp {
             id,
-            fee_denom,
-            chain_id,
-            address_prefix,
+            fee_denom: fee_denom.to_string(),
+            chain_id: chain_id.to_string(),
+            address_prefix: address_prefix.to_string(),
             load_msg_fees,
         }
     }

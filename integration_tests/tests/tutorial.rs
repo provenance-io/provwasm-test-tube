@@ -1,19 +1,14 @@
 use cosmwasm_std::{coin, Decimal};
 use provwasm_test_tube::bank::Bank;
 use provwasm_test_tube::wasm::Wasm;
-use provwasm_test_tube::{Account, Module, ProvwasmTestApp, ProvwasmTestAppOptions, RunnerError};
+use provwasm_test_tube::{Account, Module, ProvwasmTestApp, RunnerError};
 
 use provwasm_std::types::cosmos::bank::v1beta1::QueryBalanceRequest;
 use provwasm_tutorial::msg::{ExecuteMsg, InitMsg};
 
 #[test]
 fn tutorial() -> Result<(), RunnerError> {
-    let app = ProvwasmTestApp::new_with_options(ProvwasmTestAppOptions {
-        chain_id: "testchain".to_string(),
-        address_prefix: "tp".to_string(),
-        fee_denom: "nhash".to_string(),
-        load_msg_fees: false,
-    });
+    let app = ProvwasmTestApp::new();
     let accs = app.init_accounts(&[coin(100_000_000_000_000, "nhash")], 2)?;
     let admin = &accs[0];
     let merchant = &accs[1];
