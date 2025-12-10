@@ -41,13 +41,6 @@ serde = { version = "1.0.197", default-features = false, features = ["derive"] }
 serde_json = { version = "1.0.115", features = ["std"] }
 thiserror = { version = "1.0.58" }
 
-# Patch provwasm-std from git dependencies to use the released crates.io version
-# This ensures all provwasm-std dependencies resolve to the same released version,
-# even when contracts are pulled from git (which aren't published to crates.io).
-# This fixes multiple `requires_provenance` from multiple provwasm-std dependencies.
-[patch."https://github.com/provenance-io/provwasm"]
-provwasm-std = { version = "2.7.0" }
-
 [profile.release]
 opt-level = 3
 debug = false
