@@ -27,6 +27,9 @@ provwasm-test-tube = { version = "0.4.0", path = "packages/provwasm-test-tube" }
 test-tube-prov = { version = "0.4.0", path = "packages/test-tube" }
 
 base64 = "0.22.0"
+ed25519-zebra = { version = "4.1.0", default-features = false, features = [
+    "alloc",
+] }
 flate2 = "1.0"
 chrono = { version = "0.4.37", default-features = false }
 cosmrs = { version = "0.21.0", default-features = false, features = [

@@ -18,6 +18,7 @@ wasm-sudo = []
 base64 = { workspace = true }
 cosmrs = { workspace = true }
 cosmwasm-std = { workspace = true }
+ed25519-zebra = { workspace = true }
 prost = { workspace = true }
 serde_json = { workspace = true }
 thiserror = { workspace = true }
