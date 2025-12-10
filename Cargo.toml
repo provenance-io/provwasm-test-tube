@@ -4,7 +4,7 @@ resolver = "2"
 members = ["packages/*", "integration_tests"]
 
 [workspace.package]
-version = "0.4.0-rc1"
+version = "0.4.0"
 repository = "https://github.com/provenance-io/provwasm-test-tube"
 edition = "2021"
 license = "Apache-2.0"
@@ -21,12 +21,15 @@ cosmwasm-std = { version = "2.2.2", default-features = false, features = [
 cw-storage-plus = { version = "2.0.0" }
 
 ### ProvWasm
-provwasm-mocks = { version = "2.7.0-rc1" }
-provwasm-std = { version = "2.7.0-rc1" }
-provwasm-test-tube = { version = "0.4.0-rc1", path = "packages/provwasm-test-tube" }
-test-tube-prov = { version = "0.4.0-rc1", path = "packages/test-tube" }
+provwasm-mocks = { version = "2.7.1" }
+provwasm-std = { version = "2.7.1" }
+provwasm-test-tube = { version = "0.4.0", path = "packages/provwasm-test-tube" }
+test-tube-prov = { version = "0.4.0", path = "packages/test-tube" }
 
 base64 = "0.22.0"
+ed25519-zebra = { version = "4.1.0", default-features = false, features = [
+    "alloc",
+] }
 flate2 = "1.0"
 chrono = { version = "0.4.37", default-features = false }
 cosmrs = { version = "0.21.0", default-features = false, features = [
@@ -41,13 +44,6 @@ serde = { version = "1.0.197", default-features = false, features = ["derive"] }
 serde_json = { version = "1.0.115", features = ["std"] }
 thiserror = { version = "1.0.58" }
 
-# Patch provwasm-std from git dependencies to use the released crates.io version
-# This ensures all provwasm-std dependencies resolve to the same released version,
-# even when contracts are pulled from git (which aren't published to crates.io).
-# This fixes multiple `requires_provenance` from multiple provwasm-std dependencies.
-[patch."https://github.com/provenance-io/provwasm"]
-provwasm-std = { version = "2.7.0-rc1" }
-
 [profile.release]
 opt-level = 3
 debug = false
@@ -58,3 +54,9 @@ codegen-units = 1
 panic = 'abort'
 incremental = false
 overflow-checks = true
+
+# Patch git-based provwasm-std dependencies to use the crates.io version.
+# This prevents multiple versions of provwasm-std from being compiled when
+# depending on unpublished contracts from the provwasm git repository.
+[patch."https://github.com/provenance-io/provwasm"]
+provwasm-std = { version = "2.7.1" }
