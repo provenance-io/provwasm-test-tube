@@ -13,11 +13,11 @@ backtraces = []
 [dependencies]
 cosmwasm-std = { workspace = true }
 cosmwasm-schema = { workspace = true }
-attrs = { git = "https://github.com/provenance-io/provwasm", branch = "release/v2.7.x" }
-marker = { git = "https://github.com/provenance-io/provwasm", branch = "release/v2.7.x" }
-name = { git = "https://github.com/provenance-io/provwasm", branch = "release/v2.7.x" }
-trigger = { git = "https://github.com/provenance-io/provwasm", branch = "release/v2.7.x" }
-provwasm-tutorial = { git = "https://github.com/provenance-io/provwasm", branch = "release/v2.7.x" }
+attrs = { git = "https://github.com/provenance-io/provwasm", tag = "v2.7.1" }
+marker = { git = "https://github.com/provenance-io/provwasm", tag = "v2.7.1" }
+name = { git = "https://github.com/provenance-io/provwasm", tag = "v2.7.1" }
+trigger = { git = "https://github.com/provenance-io/provwasm", tag = "v2.7.1" }
+provwasm-tutorial = { git = "https://github.com/provenance-io/provwasm", tag = "v2.7.1" }
 provwasm-std = { workspace = true }
 
 [dev-dependencies]

@@ -21,8 +21,8 @@ cosmwasm-std = { version = "2.2.2", default-features = false, features = [
 cw-storage-plus = { version = "2.0.0" }
 
 ### ProvWasm
-provwasm-mocks = { version = "2.7.0" }
-provwasm-std = { version = "2.7.0" }
+provwasm-mocks = { version = "2.7.1" }
+provwasm-std = { version = "2.7.1" }
 provwasm-test-tube = { version = "0.4.0", path = "packages/provwasm-test-tube" }
 test-tube-prov = { version = "0.4.0", path = "packages/test-tube" }
 
@@ -51,3 +51,9 @@ codegen-units = 1
 panic = 'abort'
 incremental = false
 overflow-checks = true
+
+# Patch git-based provwasm-std dependencies to use the crates.io version.
+# This prevents multiple versions of provwasm-std from being compiled when
+# depending on unpublished contracts from the provwasm git repository.
+[patch."https://github.com/provenance-io/provwasm"]
+provwasm-std = { version = "2.7.1" }
