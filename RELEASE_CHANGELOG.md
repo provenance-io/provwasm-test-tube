@@ -1,4 +1,4 @@
-### [v0.4.0](https://github.com/provenance-io/provwasm-test-tube/tree/v0.4.0)
+### [v0.5.0](https://github.com/provenance-io/provwasm-test-tube/tree/v0.5.0)
 
-* upgrade to provenance v1.26.0 ([#15](https://github.com/provenance-io/provwasm-test-tube/pull/15))
-* compress contracts before storing ([#16](https://github.com/provenance-io/provwasm-test-tube/issues/16))
+* upgrade to provwasm 2.8.0 ([#19](https://github.com/provenance-io/provwasm-test-tube/pull/19))
+* upgrade to provenance v1.27.0 ([#19](https://github.com/provenance-io/provwasm-test-tube/pull/19))
