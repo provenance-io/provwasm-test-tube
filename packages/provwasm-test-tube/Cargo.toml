@@ -16,7 +16,7 @@ exclude = ["provenance", "test_artifacts"]
 cosmrs = { workspace = true }
 cosmwasm-std = { workspace = true }
 flate2 = { workspace = true }
-provwasm-std = { workspace = true }
+provwasm-std = { workspace = true, default-features = true, features = ["cosmos-authz", "cosmos-nft", "cosmos-gov", "cosmwasm-all"]}
 prost = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }

@@ -4,7 +4,7 @@ resolver = "2"
 members = ["packages/*", "integration_tests"]
 
 [workspace.package]
-version = "0.4.0"
+version = "0.5.0"
 repository = "https://github.com/provenance-io/provwasm-test-tube"
 edition = "2021"
 license = "Apache-2.0"
@@ -21,10 +21,10 @@ cosmwasm-std = { version = "2.2.2", default-features = false, features = [
 cw-storage-plus = { version = "2.0.0" }
 
 ### ProvWasm
-provwasm-mocks = { version = "2.7.1" }
-provwasm-std = { version = "2.7.1" }
-provwasm-test-tube = { version = "0.4.0", path = "packages/provwasm-test-tube" }
-test-tube-prov = { version = "0.4.0", path = "packages/test-tube" }
+provwasm-mocks = { version = "2.8.0" }
+provwasm-std = { version = "2.8.0", default-features = false}
+provwasm-test-tube = { version = "0.5.0", path = "packages/provwasm-test-tube" }
+test-tube-prov = { version = "0.5.0", path = "packages/test-tube" }
 
 base64 = "0.22.0"
 ed25519-zebra = { version = "4.1.0", default-features = false, features = [
