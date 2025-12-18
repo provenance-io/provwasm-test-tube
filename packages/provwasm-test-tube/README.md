@@ -17,6 +17,7 @@ contract against real chain's logic instead of mocks.
 
 | provwasm-test-tube | provwasm | provenance |
 |--------------------|----------|------------|
+| 0.5.0              | 2.8.x    | 1.27.0+    |
 | 0.4.0              | 2.7.x    | 1.26.0+    |
 | 0.3.0              | 2.5.x    | 1.20.0+    |
 | 0.2.0              | 2.4.x    | 1.19.1+    |
