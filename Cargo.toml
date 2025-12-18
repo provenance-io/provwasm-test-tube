@@ -59,4 +59,4 @@ overflow-checks = true
 # This prevents multiple versions of provwasm-std from being compiled when
 # depending on unpublished contracts from the provwasm git repository.
 [patch."https://github.com/provenance-io/provwasm"]
-provwasm-std = { version = "2.7.1" }
+provwasm-std = { version = "2.8.0" }
