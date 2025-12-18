@@ -23,7 +23,7 @@ serde_json = { workspace = true }
 test-tube-prov = { workspace = true }
 
 [build-dependencies]
-bindgen = "0.69.1"
+bindgen = "0.72.1"
 
 [dev-dependencies]
 cw1-whitelist = "2.0.0"
